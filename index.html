@@ -587,6 +587,7 @@
     }
 
     // === 🎯 ฟังก์ชันจัดการหน้าต่างรายละเอียดทีม (Pop-up Detail & Logic ไร้ข้อความซ้ำ) ===
+    // === 🎯 ฟังก์ชันจัดการหน้าต่างรายละเอียดทีม (Pop-up Detail & Logic ไร้ข้อความซ้ำ - เวอร์ชัน Responsive) ===
     function openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2) {
         const medalCert = row[0] !== "" ? row[0] : '-';   
         const teamId = row[1] !== "" ? row[1] : '-';      
@@ -604,8 +605,10 @@
         document.getElementById('modalTeamName').innerText = teamName;
         document.getElementById('modalInstitution').innerText = institution;
         document.getElementById('modalMedal').innerText = medalCert;
-        document.getElementById('modalRound1').innerText = round1;
-        document.getElementById('modalRound2').innerText = round2;
+        
+        // 🛠️ ปรับให้ยิงเข้าหา ID สรุปคะแนนตัวใหม่ ป้องกันปัญหาระบบหยุดทำงาน (Script Crash)
+        document.getElementById('modalRound1Score').innerText = round1;
+        document.getElementById('modalRound2Score').innerText = round2;
         document.getElementById('modalBestScore').innerText = bestScore;
 
         document.getElementById('modalTeamRankSub').innerText = `อันดับปัจจุบัน: ที่ ${actualRank}`;
@@ -654,12 +657,6 @@
             } else {
                 titleGeneralRookie.classList.remove('hidden'); // ทีมดาวรุ่งอื่นๆ -> ได้รับประกาศนียบัตร Rookie Team
             }
-
-            // คุมข้อย่อย (เนื่องจากเวอร์ชันปัจจุบันตัดข้อความประเภทกลุ่มดาวรุ่งออกแล้ว)
-            // ถ้าเป็นทีมที่ได้อันดับ 11 เป็นต้นไป จะแสดงผลเฉพาะหัวข้อเพียวๆ อย่างสะอาดสวยงาม ไม่ซ้ำซ้อนกับเกณฑ์หลักด้านบน
-            if (actualRank >= 1 && actualRank <= 10) {
-                // หากติดอันดับ Top 10 ได้แสดงประกาศนียบัตร/สิทธิ์หลักไปแล้ว ข้อย่อยกลุ่มนี้จะถูกสั่งซ่อนอัตโนมัติเพื่อป้องกันการแสดงซ้ำซ้อน
-            }
         }
 
         // ยืนยันสิทธิ์เปิดหน้าต่างแสดงความยินดี
@@ -672,6 +669,20 @@
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         document.body.style.overflow = 'hidden'; 
+    }
+
+    // === ฟังก์ชันสำหรับเปลี่ยนหน้า Pagination (ซ่อมแซมจุดเชื่อมต่อสถานะเรียบร้อย) ===
+    function changePage(direction) {
+        currentPage += direction;
+        const category = categorySelect.value;
+        updateHeaderColor(category);
+        renderPaginationTable(
+            currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1')),
+            currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 2') || (h||'').toString().includes('รอบ 2')),
+            6,
+            statusText.innerText.trim() === 'Official'
+        );
+        tableTitle.scrollIntoView({ behavior: 'smooth' });
     }
 
     // === ฟังก์ชันปิด/เปิด Modal ทั่วไป ===
