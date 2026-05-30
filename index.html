@@ -362,7 +362,7 @@
     </footer>
 
     <div class="fixed bottom-2 right-4 text-slate-500 font-bold bg-white/80 border border-slate-200/80 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs md:text-sm shadow-sm z-50 pointer-events-none select-none font-mono tracking-wide">
-        v3.4.3
+        v3.4.5
     </div>
 
 </body>
@@ -422,12 +422,12 @@
         if (!category || !region) return;
 
         // แสดงสถานะ Loading ระหว่างดึงข้อมูล
-        tableBody.parentElement.parentElement.classList.add('hidden');
-        paginationContainer.classList.add('hidden');
-        remarkBox.classList.add('hidden');
-        tableSubtitle.classList.add('hidden');
-        loading.classList.remove('hidden');
-        tableTitle.innerText = `${category} - ${regionName}`;
+        if (tableBody) tableBody.parentElement.parentElement.classList.add('hidden');
+        if (paginationContainer) paginationContainer.classList.add('hidden');
+        if (remarkBox) remarkBox.classList.add('hidden');
+        if (tableSubtitle) tableSubtitle.classList.add('hidden');
+        if (loading) loading.classList.remove('hidden');
+        if (tableTitle) tableTitle.innerText = `${category} - ${regionName}`;
 
         updateHeaderColor(category);
 
@@ -473,8 +473,8 @@
 
     // === ฟังก์ชันจัดการและจัดระเบียบข้อมูลดิบที่ได้กลับมา ===
     function handleResponseData(result) {
-        loading.classList.add('hidden');
-        tableBody.parentElement.parentElement.classList.remove('hidden');
+        if (loading) loading.classList.add('hidden');
+        if (tableBody) tableBody.parentElement.parentElement.classList.remove('hidden');
 
         if (result.error) {
             showError(result.error);
@@ -506,13 +506,14 @@
         renderPaginationTable(r1Idx, r2Idx, bestIdx, allTeamsHaveRound2);
         
         if(currentData.length > 0) {
-            remarkBox.classList.remove('hidden');
-            tableSubtitle.classList.remove('hidden');
+            if (remarkBox) remarkBox.classList.remove('hidden');
+            if (tableSubtitle) tableSubtitle.classList.remove('hidden');
         }
     }
 
     // === ฟังก์ชันสำหรับเปลี่ยนหน้า Pagination (ผูกมัดค่าสถานะ Official/Unofficial แบบไดนามิก) ===
     function updateHeaderColor(category) {
+        if (!tableHeaders) return;
         tableHeaders.className = "border-b text-base uppercase tracking-wider text-white font-bold transition-colors duration-300";
         if (category === 'Elementary') {
             tableHeaders.classList.add('bg-emerald-800', 'border-emerald-900');
@@ -527,12 +528,14 @@
 
     // === ฟังก์ชันเรนเดอร์ตารางและจัดแบ่งหน้าเพจ (Pagination) ===
     function renderPaginationTable(r1Idx, r2Idx, bestIdx, allTeamsHaveRound2) {
+        if (!tableHeaders || !tableBody) return;
+        
         tableHeaders.innerHTML = '';
         if(!currentHeaders || currentHeaders.length === 0) {
             tableHeaders.innerHTML = '<th class="p-4 text-center">ไม่พบหัวตาราง</th>';
             tableBody.innerHTML = '<tr><td class="p-8 text-center text-slate-400 font-medium">ไม่มีข้อมูลในแผ่นงานนี้</td></tr>';
-            paginationContainer.classList.add('hidden');
-            remarkBox.classList.add('hidden');
+            if (paginationContainer) paginationContainer.classList.add('hidden');
+            if (remarkBox) remarkBox.classList.add('hidden');
             return;
         }
 
@@ -547,8 +550,8 @@
         tableBody.innerHTML = '';
         if (!currentData || currentData.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="${currentHeaders.length - columnsToHide.length}" class="p-8 text-center text-slate-400 font-medium">ยังไม่มีข้อมูลการแข่งขันในรุ่นนี้</td></tr>`;
-            paginationContainer.classList.add('hidden');
-            remarkBox.classList.add('hidden');
+            if (paginationContainer) paginationContainer.classList.add('hidden');
+            if (remarkBox) remarkBox.classList.add('hidden');
             return;
         }
 
@@ -614,16 +617,17 @@
             tableBody.appendChild(tr);
         });
 
-        paginationContainer.classList.remove('hidden');
-        totalRows.innerText = totalRecords;
-        startRange.innerText = startIndex + 1;
-        textEndRange.innerText = endIndex;
-        pageNumberDisplay.innerText = `หน้า ${currentPage} / ${totalPages}`;
+        if (paginationContainer) paginationContainer.classList.remove('hidden');
+        if (totalRows) totalRows.innerText = totalRecords;
+        if (startRange) startRange.innerText = startIndex + 1;
+        if (textEndRange) textEndRange.innerText = endIndex;
+        if (pageNumberDisplay) pageNumberDisplay.innerText = `หน้า ${currentPage} / ${totalPages}`;
 
         prevBtn.disabled = prevBtnMobile.disabled = (currentPage === 1);
         nextBtn.disabled = nextBtnMobile.disabled = (currentPage === totalPages);
 
         const toggleBtnStyle = (btn) => {
+            if(!btn) return;
             if(btn.disabled) btn.classList.add('opacity-40', 'cursor-not-allowed');
             else btn.classList.remove('opacity-40', 'cursor-not-allowed');
         };
@@ -632,7 +636,6 @@
     }
 
     // === 🎯 ฟังก์ชันจัดการหน้าต่างรายละเอียดทีม (Pop-up Detail & Logic เวอร์ชันอัปเดตเกณฑ์รางวัล 2026) ===
-    // 📢 อัปเดตตรรกะเงื่อนไข: แสดงข้อความ "อันดับปัจจุบัน: ที่ x" และรายละเอียดรางวัล หลังจากข้อมูล Round 1 เข้ามาครบแล้วเท่านั้น
     function openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2) {
         const medalCert = row[0] !== "" ? row[0] : '-';   
         const teamId = row[1] !== "" ? row[1] : '-';      
@@ -646,16 +649,16 @@
         const actualRank = realIndex + 1; 
         const hasRookieStar = teamName.includes('⭐'); // ตรวจเช็กสิทธิ์ทีมดาวรุ่ง
 
-        document.getElementById('modalTeamId').innerText = `TEAM ID: ${teamId}`;
-        document.getElementById('modalTeamName').innerText = teamName;
-        document.getElementById('modalInstitution').innerText = institution;
-        document.getElementById('modalMedal').innerText = medalCert;
+        if (document.getElementById('modalTeamId')) document.getElementById('modalTeamId').innerText = `TEAM ID: ${teamId}`;
+        if (document.getElementById('modalTeamName')) document.getElementById('modalTeamName').innerText = teamName;
+        if (document.getElementById('modalInstitution')) document.getElementById('modalInstitution').innerText = institution;
+        if (document.getElementById('modalMedal')) document.getElementById('modalMedal').innerText = medalCert;
         
-        if(document.getElementById('modalRound1Score')) document.getElementById('modalRound1Score').innerText = round1;
-        if(document.getElementById('modalRound2Score')) document.getElementById('modalRound2Score').innerText = round2;
-        if(document.getElementById('modalBestScore')) document.getElementById('modalBestScore').innerText = bestScore;
+        if (document.getElementById('modalRound1Score')) document.getElementById('modalRound1Score').innerText = round1;
+        if (document.getElementById('modalRound2Score')) document.getElementById('modalRound2Score').innerText = round2;
+        if (document.getElementById('modalBestScore')) document.getElementById('modalBestScore').innerText = bestScore;
 
-        document.getElementById('modalTeamRankSub').innerText = `อันดับปัจจุบัน: ที่ ${actualRank}`;
+        if (document.getElementById('modalTeamRankSub')) document.getElementById('modalTeamRankSub').innerText = `อันดับปัจจุบัน: ที่ ${actualRank}`;
 
         // ดึง Element บล็อกแสดงความยินดีและชุดรางวัลทั้งหมด
         const congratSection = document.getElementById('congratulationsSection');
@@ -674,7 +677,8 @@
             congratSection.classList.add('hidden');
             congratSection.classList.remove('flex');
         }
-        if (congetsTitle) congratsTitle.innerText = "Congratulations";
+        // ✅ แก้ไขสะกดคำจาก congetsTitle -> congratsTitle และเพิ่มเงื่อนไขความปลอดภัย
+        if (congratsTitle) congratsTitle.innerText = "Congratulations";
         if (reward1) reward1.classList.add('hidden');
         if (reward2) reward2.classList.add('hidden');
         if (reward3) reward3.classList.add('hidden');
@@ -688,12 +692,10 @@
         let isEligibleForCongrat = false;
 
         // 🚨 [CRITICAL CHECK]: ตรวจสอบว่าข้อมูล Round 1 เข้ามาครบถ้วนแล้วหรือยัง
-        // หากไม่มีคะแนน, ข้อมูลเป็นว่าง หรือเป็นเครื่องหมาย "-" จะไม่ทำการประมวลผลกล่องรางวัลและข้อความอันดับด้านใน
         if (round1 !== '-' && round1 !== '' && round1 !== null) {
             
-            // อัปเดตหัวข้อกล่องเป็นข้อความแบบไดนามิกภาษาไทยตามโจทย์กำหนด
             if (congratsTitle) {
-                congratsTitle.innerText = `อันดับที่ :${actualRank}`;
+                congratsTitle.innerText = `อันดับที่ : ${actualRank}`;
             }
 
             // 1. 🏅 ลอจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณเมื่อแข่งครบ 2 รอบ / บอร์ด Official)
@@ -881,7 +883,4 @@
         };
     }
 </script>
-
-    
-
 </html>
