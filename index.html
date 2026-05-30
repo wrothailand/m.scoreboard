@@ -366,7 +366,6 @@
     </div>
 
 </body>
-
     <script>
     // 🔗 1. วางลิงก์ Web App URL ของ Google Apps Script ที่ได้จากการ Deploy (ทุกคน/Anyone) ตรงนี้
     const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbye2Ei6OXOzyoYh9gr7vdB6yLmFTzvtp57U0NndD9S1vATSf3xdApVFSzn_6M6AYaU/exec"; 
@@ -512,7 +511,7 @@
         }
     }
 
-    // === ฟังก์ชันสำหรับเปลี่ยนสีหัวตารางตามรุ่นอายุการแข่งขัน ===
+    // === ฟังก์ชันสำหรับเปลี่ยนหน้า Pagination (ผูกมัดค่าสถานะ Official/Unofficial แบบไดนามิก) ===
     function updateHeaderColor(category) {
         tableHeaders.className = "border-b text-base uppercase tracking-wider text-white font-bold transition-colors duration-300";
         if (category === 'Elementary') {
@@ -633,6 +632,7 @@
     }
 
     // === 🎯 ฟังก์ชันจัดการหน้าต่างรายละเอียดทีม (Pop-up Detail & Logic เวอร์ชันอัปเดตเกณฑ์รางวัล 2026) ===
+    // 📢 อัปเดตตรรกะเงื่อนไข: แสดงข้อความ "อันดับปัจจุบัน: ที่ x" และรายละเอียดรางวัล หลังจากข้อมูล Round 1 เข้ามาครบแล้วเท่านั้น
     function openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2) {
         const medalCert = row[0] !== "" ? row[0] : '-';   
         const teamId = row[1] !== "" ? row[1] : '-';      
@@ -651,14 +651,13 @@
         document.getElementById('modalInstitution').innerText = institution;
         document.getElementById('modalMedal').innerText = medalCert;
         
-        // ผูกสลัก ID หน้าต่างโครงสร้างใหม่ให้แสดงผลเรียบร้อย
         if(document.getElementById('modalRound1Score')) document.getElementById('modalRound1Score').innerText = round1;
         if(document.getElementById('modalRound2Score')) document.getElementById('modalRound2Score').innerText = round2;
         if(document.getElementById('modalBestScore')) document.getElementById('modalBestScore').innerText = bestScore;
 
         document.getElementById('modalTeamRankSub').innerText = `อันดับปัจจุบัน: ที่ ${actualRank}`;
 
-        // ดึง Element บล็อกแสดงความยินดี
+        // ดึง Element บล็อกแสดงความยินดีและชุดรางวัลทั้งหมด
         const congratSection = document.getElementById('congratulationsSection');
         const reward1 = document.getElementById('rewardRank1');
         const reward2 = document.getElementById('rewardRank2');
@@ -668,75 +667,87 @@
         const rewardRookie = document.getElementById('rewardRookie');
         const titleBestRookie = document.getElementById('titleBestRookie');
         const titleGeneralRookie = document.getElementById('titleGeneralRookie');
+        const congratsTitle = congratSection ? congratSection.querySelector('h4') : null;
 
-        // 🔄 รีเซ็ตคลาสและซ่อน Element เดิมทั้งหมดก่อนทำการคำนวณใหม่
-        congratSection.classList.add('hidden');
-        congratSection.classList.remove('flex');
-        if(reward1) reward1.classList.add('hidden');
-        if(reward2) reward2.classList.add('hidden');
-        if(reward3) reward3.classList.add('hidden');
-        if(reward4To10) reward4To10.classList.add('hidden');
-        if(rewardMedalBadge) rewardMedalBadge.classList.add('hidden');
-        if(rewardRookie) rewardRookie.classList.add('hidden');
-        if(titleBestRookie) titleBestRookie.classList.add('hidden');
-        if(titleGeneralRookie) titleGeneralRookie.classList.add('hidden');
-        if(document.getElementById('certDynamicRank')) document.getElementById('certDynamicRank').innerText = '-';
+        // 🔄 รีเซ็ตคลาสและซ่อน Element รางวัลเดิมทั้งหมดก่อนเพื่อล้างสถานะเก่า
+        if (congratSection) {
+            congratSection.classList.add('hidden');
+            congratSection.classList.remove('flex');
+        }
+        if (congetsTitle) congratsTitle.innerText = "Congratulations";
+        if (reward1) reward1.classList.add('hidden');
+        if (reward2) reward2.classList.add('hidden');
+        if (reward3) reward3.classList.add('hidden');
+        if (reward4To10) reward4To10.classList.add('hidden');
+        if (rewardMedalBadge) rewardMedalBadge.classList.add('hidden');
+        if (rewardRookie) rewardRookie.classList.add('hidden');
+        if (titleBestRookie) titleBestRookie.classList.add('hidden');
+        if (titleGeneralRookie) titleGeneralRookie.classList.add('hidden');
+        if (document.getElementById('certDynamicRank')) document.getElementById('certDynamicRank').innerText = '-';
         
         let isEligibleForCongrat = false;
 
-        // 1. 🏅 ลอจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณเมื่อแข่งครบ 2 รอบ / บอร์ด Official)
-        if (allTeamsHaveRound2 && actualRank <= 10) {
-            isEligibleForCongrat = true;
-            if (actualRank === 1 && reward1) {
-                reward1.classList.remove('hidden');
-            } else if (actualRank === 2 && reward2) {
-                reward2.classList.remove('hidden');
-            } else if (actualRank === 3 && reward3) {
-                reward3.classList.remove('hidden');
-            } else if (actualRank >= 4 && actualRank <= 10 && reward4To10) {
-                const dynRank = document.getElementById('certDynamicRank');
-                if(dynRank) dynRank.innerText = actualRank; // แสดงอันดับแบบไดนามิกบนหน้างาน
-                reward4To10.classList.remove('hidden');
+        // 🚨 [CRITICAL CHECK]: ตรวจสอบว่าข้อมูล Round 1 เข้ามาครบถ้วนแล้วหรือยัง
+        // หากไม่มีคะแนน, ข้อมูลเป็นว่าง หรือเป็นเครื่องหมาย "-" จะไม่ทำการประมวลผลกล่องรางวัลและข้อความอันดับด้านใน
+        if (round1 !== '-' && round1 !== '' && round1 !== null) {
+            
+            // อัปเดตหัวข้อกล่องเป็นข้อความแบบไดนามิกภาษาไทยตามโจทย์กำหนด
+            if (congratsTitle) {
+                congratsTitle.innerText = `อันดับที่ :${actualRank}`;
             }
-        }
 
-        // 2. 🥉 ลอจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze
-        const cleanMedal = medalCert.toString().toLowerCase();
-        if (cleanMedal.includes('gold') || cleanMedal.includes('silver') || cleanMedal.includes('bronze') || cleanMedal.includes('เหรียญ')) {
-            isEligibleForCongrat = true;
-            if(rewardMedalBadge) {
-                rewardMedalBadge.classList.remove('hidden');
-                
-                // สลับสัญลักษณ์ไอคอนเหรียญรางวัลให้แมตช์อัตโนมัติ ทั้งไทยและอังกฤษ
-                const iconEl = document.getElementById('medalRewardIcon');
-                if (iconEl) {
-                    if (cleanMedal.includes('gold') || cleanMedal.includes('ทอง')) iconEl.innerText = '🥇';
-                    else if (cleanMedal.includes('silver') || cleanMedal.includes('เงิน')) iconEl.innerText = '🥈';
-                    else if (cleanMedal.includes('bronze') || cleanMedal.includes('ทองแดง')) iconEl.innerText = '🥉';
-                    else iconEl.innerText = '🏅';
+            // 1. 🏅 ลอจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณเมื่อแข่งครบ 2 รอบ / บอร์ด Official)
+            if (allTeamsHaveRound2 && actualRank <= 10) {
+                isEligibleForCongrat = true;
+                if (actualRank === 1 && reward1) {
+                    reward1.classList.remove('hidden');
+                } else if (actualRank === 2 && reward2) {
+                    reward2.classList.remove('hidden');
+                } else if (actualRank === 3 && reward3) {
+                    reward3.classList.remove('hidden');
+                } else if (actualRank >= 4 && actualRank <= 10 && reward4To10) {
+                    const dynRank = document.getElementById('certDynamicRank');
+                    if(dynRank) dynRank.innerText = actualRank;
+                    reward4To10.classList.remove('hidden');
                 }
             }
-        }
 
-        // 3. 🎯 ลอจิกตรวจสอบรางวัลพิเศษกลุ่มดาวรุ่ง (Rookie Logic)
-        if (allTeamsHaveRound2 && hasRookieStar) {
-            isEligibleForCongrat = true;
-            if(rewardRookie) {
-                rewardRookie.classList.remove('hidden');
-
-                // แยกประเภทคัดกลุ่มย่อยแชมป์ดาวรุ่ง / ดาวรุ่งทั่วไป
-                if (realIndex === bestRookieIndex && titleBestRookie) {
-                    titleBestRookie.classList.remove('hidden');
-                } else if (titleGeneralRookie) {
-                    titleGeneralRookie.classList.remove('hidden');
+            // 2. 🥉 ลอจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze
+            const cleanMedal = medalCert.toString().toLowerCase();
+            if (cleanMedal.includes('gold') || cleanMedal.includes('silver') || cleanMedal.includes('bronze') || cleanMedal.includes('เหรียญ')) {
+                isEligibleForCongrat = true;
+                if(rewardMedalBadge) {
+                    rewardMedalBadge.classList.remove('hidden');
+                    
+                    const iconEl = document.getElementById('medalRewardIcon');
+                    if (iconEl) {
+                        if (cleanMedal.includes('gold') || cleanMedal.includes('ทอง')) iconEl.innerText = '🥇';
+                        else if (cleanMedal.includes('silver') || cleanMedal.includes('เงิน')) iconEl.innerText = '🥈';
+                        else if (cleanMedal.includes('bronze') || cleanMedal.includes('ทองแดง')) iconEl.innerText = '🥉';
+                        else iconEl.innerText = '🏅';
+                    }
                 }
             }
-        }
 
-        // ยืนยันสิทธิ์เปิดใช้งานกล่องแอนิเมชันแสดงความยินดี
-        if (isEligibleForCongrat && congratSection) {
-            congratSection.classList.remove('hidden');
-            congratSection.classList.add('flex');
+            // 3. 🎯 ลอจิกตรวจสอบรางวัลพิเศษกลุ่มดาวรุ่ง (Rookie Logic)
+            if (allTeamsHaveRound2 && hasRookieStar) {
+                isEligibleForCongrat = true;
+                if(rewardRookie) {
+                    rewardRookie.classList.remove('hidden');
+
+                    if (realIndex === bestRookieIndex && titleBestRookie) {
+                        titleBestRookie.classList.remove('hidden');
+                    } else if (titleGeneralRookie) {
+                        titleGeneralRookie.classList.remove('hidden');
+                    }
+                }
+            }
+
+            // ยืนยันสิทธิ์เปิดใช้งานกล่องแอนิเมชันแสดงความยินดี
+            if (isEligibleForCongrat && congratSection) {
+                congratSection.classList.remove('hidden');
+                congratSection.classList.add('flex');
+            }
         }
 
         const modal = document.getElementById('teamDetailModal');
@@ -782,7 +793,6 @@
         }
     }
 
-    // ฟังก์ชันย่อยสำหรับปิดกล่องรายละเอียดรางวัลเกียรติบัตรเหรียญรางวัล
     function closeMedalInfoModal() {
         const medalModal = document.getElementById('medalInfoModal');
         if(medalModal) {
@@ -871,5 +881,7 @@
         };
     }
 </script>
-</body>
+
+    
+
 </html>
