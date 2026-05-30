@@ -134,95 +134,92 @@
     </main>
 
     <div id="teamDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden items-center justify-center p-4 transition-all duration-300">
-    
-    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-animate border border-slate-100 max-h-[92vh] flex flex-col">
-        
-        <div id="normalModalHeader" class="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-5 py-4 md:px-6 md:py-5 flex-shrink-0">
-            <div class="flex justify-between items-start gap-4">
-                <div class="min-w-0 flex-1">
-                    <span id="modalTeamId" class="inline-block bg-indigo-600 text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">TEAM ID: -</span>
-                    <h3 id="modalTeamName" class="text-lg md:text-xl font-bold mt-1.5 tracking-wide drop-shadow-sm truncate">Team Name</h3>
-                    <div id="modalTeamRankSub" class="text-amber-400 text-sm md:text-base font-bold mt-1 tracking-wide">อันดับที่ : -</div>
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-animate border border-slate-100 max-h-[92vh] flex flex-col">
+            
+            <div id="normalModalHeader" class="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-5 py-4 md:px-6 md:py-5 flex-shrink-0">
+                <div class="flex justify-between items-start gap-4">
+                    <div class="min-w-0 flex-1">
+                        <span id="modalTeamId" class="inline-block bg-indigo-600 text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">TEAM ID: -</span>
+                        <h3 id="modalTeamName" class="text-lg md:text-xl font-bold mt-1.5 tracking-wide drop-shadow-sm truncate">Team Name</h3>
+                        <div id="modalTeamRankSub" class="text-amber-400 text-sm md:text-base font-bold mt-1 tracking-wide">อันดับที่ : -</div>
+                    </div>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-white bg-slate-700/40 hover:bg-slate-700/80 p-2 rounded-full transition-colors focus:outline-none flex-shrink-0">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white bg-slate-700/40 hover:bg-slate-700/80 p-2 rounded-full transition-colors focus:outline-none flex-shrink-0">
-                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+            </div>
+
+            <div class="overflow-y-auto flex-1 p-5 md:p-6 space-y-5">
+                <div id="congratulationsSection" class="hidden"></div>
+
+                <div class="space-y-3">
+                    <div class="flex items-start bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                        <div class="bg-indigo-50 p-2 rounded-xl text-indigo-600 mr-3 mt-0.5 flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0V11m0 0H9m11-4a2 2 0 11-4 0 2 2 0 014 0zM7 7h.01M7 11h.01M7 15h.01M13 7h.01M13 11h.01m0 10V11m0 0h1.5m6.5 0h-1.5"></path>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">Institution / School</p>
+                            <p id="modalInstitution" class="text-sm md:text-base font-semibold text-slate-800 mt-0.5 break-words">-</p>
+                        </div>
+                    </div>
+
+                    <div onclick="openMedalInfoModal()" class="flex items-start bg-amber-50/50 hover:bg-amber-50 p-3.5 rounded-2xl border border-amber-100/60 cursor-pointer group transition-all active:scale-[0.99]">
+                        <div class="bg-amber-50 p-2 rounded-xl text-amber-600 mr-3 mt-0.5 group-hover:scale-105 transition-transform flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138z"></path>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[10px] md:text-xs font-bold text-amber-600/80 uppercase tracking-wider flex items-center justify-between gap-2">
+                                <span>Medal Certificate</span> 
+                                <span class="inline-block text-[9px] bg-amber-600/10 text-amber-700 px-1.5 py-0.5 rounded-md font-bold flex-shrink-0">คลิกดูเกณฑ์</span>
+                            </p>
+                            <p id="modalMedal" class="text-sm md:text-base font-bold text-slate-800 mt-0.5 flex items-center justify-between gap-2">
+                                <span class="truncate">-</span>
+                                <svg class="w-4 h-4 text-slate-400 group-hover:text-amber-600 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Performance Overview</p>
+                    <div class="grid grid-cols-3 gap-2.5 md:gap-3">
+                        <div class="bg-slate-50 rounded-2xl p-2.5 md:p-3 text-center border border-slate-100">
+                            <span class="text-[10px] md:text-xs font-semibold text-slate-400 block mb-0.5">Round 1</span>
+                            <span id="modalRound1Score" class="text-base md:text-xl font-bold text-slate-700">-</span>
+                        </div>
+                        <div class="bg-slate-50 rounded-2xl p-2.5 md:p-3 text-center border border-slate-100">
+                            <span class="text-[10px] md:text-xs font-semibold text-slate-400 block mb-0.5">Round 2</span>
+                            <span id="modalRound2Score" class="text-base md:text-xl font-bold text-slate-700">-</span>
+                        </div>
+                        <div class="bg-emerald-50 rounded-2xl p-2.5 md:p-3 text-center border border-emerald-100/60 ring-1 ring-emerald-600/10">
+                            <span class="text-[10px] md:text-xs font-bold text-emerald-600 block mb-0.5">Best Score</span>
+                            <span id="modalBestScore" class="text-base md:text-xl font-extrabold text-emerald-800">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-1">
+                    <p class="text-xs text-amber-700 bg-amber-500/10 rounded-xl px-3.5 py-2.5 font-semibold border border-amber-600/10 text-center leading-relaxed">
+                        ⚠️ อันดับคะแนนจะจัดหลังจากคณะกรรมการตรวจสอบความถูกต้องเรียบร้อยแล้ว
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 px-5 py-3.5 md:px-6 md:py-4 flex justify-end items-center border-t border-slate-100 flex-shrink-0">
+                <button onclick="closeModal()" class="w-full sm:w-auto px-5 py-2.5 bg-slate-200 hover:bg-slate-300/80 text-slate-700 font-semibold rounded-xl transition-colors text-sm focus:outline-none">
+                    ปิดหน้าต่าง
                 </button>
             </div>
         </div>
-
-        <div class="overflow-y-auto flex-1 p-5 md:p-6 space-y-5">
-            
-            <div id="congratulationsSection"
-
-            <div class="space-y-3">
-                <div class="flex items-start bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
-                    <div class="bg-indigo-50 p-2 rounded-xl text-indigo-600 mr-3 mt-0.5 flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0V11m0 0H9m11-4a2 2 0 11-4 0 2 2 0 014 0zM7 7h.01M7 11h.01M7 15h.01M13 7h.01M13 11h.01m0 10V11m0 0h1.5m6.5 0h-1.5"></path>
-                        </svg>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">Institution / School</p>
-                        <p id="modalInstitution" class="text-sm md:text-base font-semibold text-slate-800 mt-0.5 break-words">-</p>
-                    </div>
-                </div>
-
-                <div onclick="openMedalInfoModal()" class="flex items-start bg-amber-50/50 hover:bg-amber-50 p-3.5 rounded-2xl border border-amber-100/60 cursor-pointer group transition-all active:scale-[0.99]">
-                    <div class="bg-amber-50 p-2 rounded-xl text-amber-600 mr-3 mt-0.5 group-hover:scale-105 transition-transform flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138z"></path>
-                        </svg>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-[10px] md:text-xs font-bold text-amber-600/80 uppercase tracking-wider flex items-center justify-between gap-2">
-                            <span>Medal Certificate</span> 
-                            <span class="inline-block text-[9px] bg-amber-600/10 text-amber-700 px-1.5 py-0.5 rounded-md font-bold flex-shrink-0">คลิกดูเกณฑ์</span>
-                        </p>
-                        <p id="modalMedal" class="text-sm md:text-base font-bold text-slate-800 mt-0.5 flex items-center justify-between gap-2">
-                            <span class="truncate">-</span>
-                            <svg class="w-4 h-4 text-slate-400 group-hover:text-amber-600 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Performance Overview</p>
-                <div class="grid grid-cols-3 gap-2.5 md:gap-3">
-                    <div class="bg-slate-50 rounded-2xl p-2.5 md:p-3 text-center border border-slate-100">
-                        <span class="text-[10px] md:text-xs font-semibold text-slate-400 block mb-0.5">Round 1</span>
-                        <span id="modalRound1Score" class="text-base md:text-xl font-bold text-slate-700">-</span>
-                    </div>
-                    <div class="bg-slate-50 rounded-2xl p-2.5 md:p-3 text-center border border-slate-100">
-                        <span class="text-[10px] md:text-xs font-semibold text-slate-400 block mb-0.5">Round 2</span>
-                        <span id="modalRound2Score" class="text-base md:text-xl font-bold text-slate-700">-</span>
-                    </div>
-                    <div class="bg-emerald-50 rounded-2xl p-2.5 md:p-3 text-center border border-emerald-100/60 ring-1 ring-emerald-600/10">
-                        <span class="text-[10px] md:text-xs font-bold text-emerald-600 block mb-0.5">Best Score</span>
-                        <span id="modalBestScore" class="text-base md:text-xl font-extrabold text-emerald-800">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pt-1">
-                <p class="text-xs text-amber-700 bg-amber-500/10 rounded-xl px-3.5 py-2.5 font-semibold border border-amber-600/10 text-center leading-relaxed">
-                    ⚠️ อันดับคะแนนจะจัดหลังจากคณะกรรมการตรวจสอบความถูกต้องเรียบร้อยแล้ว
-                </p>
-            </div>
-        </div>
-
-        <div class="bg-slate-50 px-5 py-3.5 md:px-6 md:py-4 flex justify-end items-center border-t border-slate-100 flex-shrink-0">
-            <button onclick="closeModal()" class="w-full sm:w-auto px-5 py-2.5 bg-slate-200 hover:bg-slate-300/80 text-slate-700 font-semibold rounded-xl transition-colors text-sm focus:outline-none">
-                ปิดหน้าต่าง
-            </button>
-        </div>
     </div>
-</div>
-
 
     <div id="medalInfoModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[70] hidden items-center justify-center p-4 transition-all duration-300">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-animate border border-slate-200/60">
@@ -276,8 +273,9 @@
     </footer>
 
     <div class="fixed bottom-2 right-4 text-slate-500 font-bold bg-white/80 border border-slate-200/80 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs md:text-sm shadow-sm z-50 pointer-events-none select-none font-mono tracking-wide">
-        v3.3.0
+        v3.4.2
     </div>
+</body>
 
     <script>
     // 🔗 1. วางลิงก์ Web App URL ของ Google Apps Script ที่ได้จากการ Deploy (ทุกคน/Anyone) ตรงนี้
@@ -348,7 +346,6 @@
         const isGoogleEnv = typeof google !== 'undefined' && google.script && google.script.run;
 
         if (isGoogleEnv) {
-            // โหมดที่ 1: รันบนระบบ Google Web App โดยตรง
             console.log('⚡ Running on Google Environment: Fetching via google.script.run');
             google.script.run
                 .withSuccessHandler(function(result) {
@@ -360,7 +357,6 @@
                 .getLeaderboardData(category, region);
 
         } else if (GOOGLE_API_URL && !GOOGLE_API_URL.includes('XXXXX')) {
-            // โหมดที่ 2: รันบน GitHub Pages (ยิง Fetch API ไปหา Google Sheets จากภายนอก)
             console.log('🌐 Running on GitHub/External: Fetching via API URL');
             const fetchUrl = `${GOOGLE_API_URL}?category=${encodeURIComponent(category)}&region=${encodeURIComponent(region)}`;
             
@@ -378,7 +374,6 @@
                 });
 
         } else {
-            // โหมดที่ 3: เปิดทดสอบแบบ Offline บนเครื่องคอมพิวเตอร์ตัวเอง (ดึงจาก Mock Data)
             console.log('💻 Running Offline: Loading Mock Data');
             setTimeout(function() {
                 const mockResult = generateMockData(category, regionName);
@@ -566,9 +561,10 @@
         document.getElementById('modalInstitution').innerText = institution;
         document.getElementById('modalMedal').innerText = medalCert;
         
-        document.getElementById('modalRound1Score').innerText = round1;
-        document.getElementById('modalRound2Score').innerText = round2;
-        document.getElementById('modalBestScore').innerText = bestScore;
+        // ผูกสลัก ID หน้าต่างโครงสร้างใหม่ให้แสดงผลเรียบร้อย
+        if(document.getElementById('modalRound1Score')) document.getElementById('modalRound1Score').innerText = round1;
+        if(document.getElementById('modalRound2Score')) document.getElementById('modalRound2Score').innerText = round2;
+        if(document.getElementById('modalBestScore')) document.getElementById('modalBestScore').innerText = bestScore;
 
         document.getElementById('modalTeamRankSub').innerText = `อันดับปัจจุบัน: ที่ ${actualRank}`;
 
@@ -586,103 +582,123 @@
         // 🔄 รีเซ็ตคลาสและซ่อน Element เดิมทั้งหมดก่อนทำการคำนวณใหม่
         congratSection.classList.add('hidden');
         congratSection.classList.remove('flex');
-        reward1.classList.add('hidden');
-        reward2.classList.add('hidden');
-        reward3.classList.add('hidden');
-        reward4To10.classList.add('hidden');
-        rewardMedalBadge.classList.add('hidden');
-        rewardRookie.classList.add('hidden');
-        titleBestRookie.classList.add('hidden');
-        titleGeneralRookie.classList.add('hidden');
+        if(reward1) reward1.classList.add('hidden');
+        if(reward2) reward2.classList.add('hidden');
+        if(reward3) reward3.classList.add('hidden');
+        if(reward4To10) reward4To10.classList.add('hidden');
+        if(rewardMedalBadge) rewardMedalBadge.classList.add('hidden');
+        if(rewardRookie) rewardRookie.classList.add('hidden');
+        if(titleBestRookie) titleBestRookie.classList.add('hidden');
+        if(titleGeneralRookie) titleGeneralRookie.classList.add('hidden');
+        if(document.getElementById('certDynamicRank')) document.getElementById('certDynamicRank').innerText = '-';
         
         let isEligibleForCongrat = false;
 
         // 1. 🏅 ลอจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณเมื่อแข่งครบ 2 รอบ / บอร์ด Official)
         if (allTeamsHaveRound2 && actualRank <= 10) {
             isEligibleForCongrat = true;
-            if (actualRank === 1) {
+            if (actualRank === 1 && reward1) {
                 reward1.classList.remove('hidden');
-            } else if (actualRank === 2) {
+            } else if (actualRank === 2 && reward2) {
                 reward2.classList.remove('hidden');
-            } else if (actualRank === 3) {
+            } else if (actualRank === 3 && reward3) {
                 reward3.classList.remove('hidden');
-            } else if (actualRank >= 4 && actualRank <= 10) {
-                document.getElementById('certDynamicRank').innerText = actualRank; // แสดงอันดับ x แบบไดนามิก
+            } else if (actualRank >= 4 && actualRank <= 10 && reward4To10) {
+                const dynRank = document.getElementById('certDynamicRank');
+                if(dynRank) dynRank.innerText = actualRank; // แสดงอันดับแบบไดนามิกบนหน้างาน
                 reward4To10.classList.remove('hidden');
             }
         }
 
-        // 2. 🥉 ลอจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze (มีเงื่อนไขเพิ่มเติมป้ายเกียรติคุณ)
+        // 2. 🥉 ลอจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze
         const cleanMedal = medalCert.toString().toLowerCase();
         if (cleanMedal.includes('gold') || cleanMedal.includes('silver') || cleanMedal.includes('bronze') || cleanMedal.includes('เหรียญ')) {
             isEligibleForCongrat = true;
-            rewardMedalBadge.classList.remove('hidden');
-            
-            // ปรับเปลี่ยนไอคอนตามกลุ่มเหรียญรางวัลให้สวยงาม
-            const iconEl = document.getElementById('medalRewardIcon');
-            if (cleanMedal.includes('gold')) iconEl.innerText = '🥇';
-            else if (cleanMedal.includes('silver')) iconEl.innerText = '🥈';
-            else if (cleanMedal.includes('bronze')) iconEl.innerText = '🥉';
-            else iconEl.innerText = '🏅';
+            if(rewardMedalBadge) {
+                rewardMedalBadge.classList.remove('hidden');
+                
+                // สลับสัญลักษณ์ไอคอนเหรียญรางวัลให้แมตช์อัตโนมัติ ทั้งไทยและอังกฤษ
+                const iconEl = document.getElementById('medalRewardIcon');
+                if (iconEl) {
+                    if (cleanMedal.includes('gold') || cleanMedal.includes('ทอง')) iconEl.innerText = '🥇';
+                    else if (cleanMedal.includes('silver') || cleanMedal.includes('เงิน')) iconEl.innerText = '🥈';
+                    else if (cleanMedal.includes('bronze') || cleanMedal.includes('ทองแดง')) iconEl.innerText = '🥉';
+                    else iconEl.innerText = '🏅';
+                }
+            }
         }
 
         // 3. 🎯 ลอจิกตรวจสอบรางวัลพิเศษกลุ่มดาวรุ่ง (Rookie Logic)
         if (allTeamsHaveRound2 && hasRookieStar) {
             isEligibleForCongrat = true;
-            rewardRookie.classList.remove('hidden');
+            if(rewardRookie) {
+                rewardRookie.classList.remove('hidden');
 
-            // แยกประเภทคัดกลุ่มย่อยแชมป์ดาวรุ่ง / ดาวรุ่งทั่วไป
-            if (realIndex === bestRookieIndex) {
-                titleBestRookie.classList.remove('hidden');
-            } else {
-                titleGeneralRookie.classList.remove('hidden');
+                // แยกประเภทคัดกลุ่มย่อยแชมป์ดาวรุ่ง / ดาวรุ่งทั่วไป
+                if (realIndex === bestRookieIndex && titleBestRookie) {
+                    titleBestRookie.classList.remove('hidden');
+                } else if (titleGeneralRookie) {
+                    titleGeneralRookie.classList.remove('hidden');
+                }
             }
         }
 
         // ยืนยันสิทธิ์เปิดใช้งานกล่องแอนิเมชันแสดงความยินดี
-        if (isEligibleForCongrat) {
+        if (isEligibleForCongrat && congratSection) {
             congratSection.classList.remove('hidden');
             congratSection.classList.add('flex');
         }
 
         const modal = document.getElementById('teamDetailModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden'; 
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; 
+        }
     }
 
-    // === ฟังก์ชันสำหรับเปลี่ยนหน้า Pagination (ซ่อมแซมจุดเชื่อมต่อสถานะเรียบร้อย) ===
+    // === ฟังก์ชันสำหรับเปลี่ยนหน้า Pagination (ผูกมัดค่าสถานะ Official/Unofficial แบบไดนามิก) ===
     function changePage(direction) {
         currentPage += direction;
         const category = categorySelect.value;
         updateHeaderColor(category);
+        
+        const isOfficialBoard = (statusText && statusText.innerText.trim() === 'Official');
+        
         renderPaginationTable(
             currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1')),
             currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 2') || (h||'').toString().includes('รอบ 2')),
             6,
-            statusText.innerText.trim() === 'Official'
+            isOfficialBoard
         );
-        tableTitle.scrollIntoView({ behavior: 'smooth' });
+        if(tableTitle) tableTitle.scrollIntoView({ behavior: 'smooth' });
     }
 
     // === ฟังก์ชันปิด/เปิด Modal ทั่วไป ===
     function closeModal() {
         const modal = document.getElementById('teamDetailModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = ''; 
+        if(modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = ''; 
+        }
     }
 
     function openMedalInfoModal() {
         const medalModal = document.getElementById('medalInfoModal');
-        medalModal.classList.remove('hidden');
-        medalModal.classList.add('flex');
+        if(medalModal) {
+            medalModal.classList.remove('hidden');
+            medalModal.classList.add('flex');
+        }
     }
 
+    // ฟังก์ชันย่อยสำหรับปิดกล่องรายละเอียดรางวัลเกียรติบัตรเหรียญรางวัล
     function closeMedalInfoModal() {
         const medalModal = document.getElementById('medalInfoModal');
-        medalModal.classList.add('hidden');
-        medalModal.classList.remove('flex');
+        if(medalModal) {
+            medalModal.classList.add('hidden');
+            medalModal.classList.remove('flex');
+        }
     }
 
     window.onclick = function(event) {
@@ -695,22 +711,9 @@
         }
     }
 
-    // === ฟังก์ชันสำหรับเปลี่ยนหน้า Pagination ===
-    function changePage(direction) {
-        currentPage += direction;
-        const category = categorySelect.value;
-        updateHeaderColor(category);
-        renderPaginationTable(
-            currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1')),
-            currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 2') || (h||'').toString().includes('รอบ 2')),
-            6,
-            statusText.innerText === 'Official'
-        );
-        tableTitle.scrollIntoView({ behavior: 'smooth' });
-    }
-
     // === ฟังก์ชันแจ้งสถานะบอร์ดคะแนน (Official / Unofficial) ===
     function updateStatus(isOfficial) {
+        if(!statusBadge || !statusDot || !statusText) return;
         statusBadge.classList.remove('hidden');
         statusBadge.classList.add('flex');
         if (isOfficial) {
@@ -725,37 +728,38 @@
     }
 
     function showBackendError() {
-        loading.classList.add('hidden');
-        tableBody.parentElement.parentElement.classList.remove('hidden');
-        showError('เกิดข้อผิดพลาดในการเชื่อมต่อระบบหลังบ้าน Google Sheets');
+        if(loading) loading.classList.add('hidden');
+        if(tableBody) {
+            tableBody.parentElement.parentElement.classList.remove('hidden');
+            showError('เกิดข้อผิดพลาดในการเชื่อมต่อระบบหลังบ้าน Google Sheets');
+        }
         updateStatus(false);
     }
 
     function showError(message) {
-        tableHeaders.innerHTML = `<th class="p-4 text-center text-red-500">เกิดข้อผิดพลาด</th>`;
-        tableBody.innerHTML = `<tr><td class="p-8 text-center text-red-400 font-semibold">${message}</td></tr>`;
-        paginationContainer.classList.add('hidden');
-        remarkBox.classList.add('hidden');
+        if(tableHeaders) tableHeaders.innerHTML = `<th class="p-4 text-center text-red-500">เกิดข้อผิดพลาด</th>`;
+        if(tableBody) tableBody.innerHTML = `<tr><td class="p-8 text-center text-red-400 font-semibold">${message}</td></tr>`;
+        if(paginationContainer) paginationContainer.classList.add('hidden');
+        if(remarkBox) remarkBox.classList.add('hidden');
     }
 
-    // === ⏳ 3. ระบบ Auto-Fetch ดึงข้อมูลใหม่มาอัปเดตอัตโนมัติทุกๆ 5 นาที ===
+    // === ⏳ ระบบ Auto-Fetch ดึงข้อมูลใหม่มาอัปเดตอัตโนมัติทุกๆ 5 นาที ===
     setInterval(function() {
         const category = categorySelect.value;
         const region = regionSelect.value;
         const modal = document.getElementById('teamDetailModal');
 
-        // ตรวจเช็ก: ต้องมีข้อมูลครบ และหน้าต่าง Pop-up ของผู้ใช้งานต้องปิดอยู่เพื่อป้องกันตารางรีเฟรชตัดหน้า
         if (category && region && (!modal || modal.classList.contains('hidden'))) {
             console.log('🔄 อัปเดตข้อมูลอัตโนมัติประจำรอบ 5 นาที...');
-            const savedPage = currentPage; // ล็อกจำหน้าปัจจุบันของผู้ใช้เอาไว้
+            const savedPage = currentPage; 
             
-            callBackend(); // โหลดคะแนนสดใหม่จากหลังบ้าน
+            callBackend(); 
             
             setTimeout(function() {
-                currentPage = savedPage; // คืนค่าล็อกหน้าเดิมให้อัตโนมัติหลังตารางโหลดเสร็จ
+                currentPage = savedPage; 
             }, 800); 
         }
-    }, 5 * 60 * 1000); // 5 นาที (คำนวณจากหน่วยมิลลิวินาที)
+    }, 5 * 60 * 1000); 
 
     // === ฟังก์ชันสำหรับจำลองข้อมูลแบบ Local Offline (Mock Data) ===
     function generateMockData(category, regionName) {
