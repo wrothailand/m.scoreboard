@@ -658,8 +658,6 @@
         if (document.getElementById('modalRound2Score')) document.getElementById('modalRound2Score').innerText = round2;
         if (document.getElementById('modalBestScore')) document.getElementById('modalBestScore').innerText = bestScore;
 
-        if (document.getElementById('modalTeamRankSub')) document.getElementById('modalTeamRankSub').innerText = `อันดับปัจจุบัน: ที่ ${actualRank}`;
-
         // ดึง Element บล็อกแสดงความยินดีและชุดรางวัลทั้งหมด
         const congratSection = document.getElementById('congratulationsSection');
         const reward1 = document.getElementById('rewardRank1');
@@ -671,13 +669,13 @@
         const titleBestRookie = document.getElementById('titleBestRookie');
         const titleGeneralRookie = document.getElementById('titleGeneralRookie');
         const congratsTitle = congratSection ? congratSection.querySelector('h4') : null;
+        const rankSubText = document.getElementById('modalTeamRankSub');
 
         // 🔄 รีเซ็ตคลาสและซ่อน Element รางวัลเดิมทั้งหมดก่อนเพื่อล้างสถานะเก่า
         if (congratSection) {
             congratSection.classList.add('hidden');
             congratSection.classList.remove('flex');
         }
-        // ✅ แก้ไขสะกดคำจาก congetsTitle -> congratsTitle และเพิ่มเงื่อนไขความปลอดภัย
         if (congratsTitle) congratsTitle.innerText = "Congratulations";
         if (reward1) reward1.classList.add('hidden');
         if (reward2) reward2.classList.add('hidden');
@@ -691,11 +689,29 @@
         
         let isEligibleForCongrat = false;
 
-        // 🚨 [CRITICAL CHECK]: ตรวจสอบว่าข้อมูล Round 1 เข้ามาครบถ้วนแล้วหรือยัง
+        // 🔍 ตรวจเช็กกระดานหลักว่าทุกๆ ทีมมีคะแนน Round 1 แล้วหรือยังเพื่อระบุความสมบูรณ์ของข้อมูล
+        let allTeamsHaveRound1 = false;
+        if (r1Idx !== -1 && currentData.length > 0) {
+            allTeamsHaveRound1 = currentData.every(r => r[r1Idx] !== null && r[r1Idx].toString().trim() !== "" && r[r1Idx].toString().trim() !== "-");
+        }
+
+        // 🚨 ปรับเปลี่ยน Wording และแสดง/ซ่อน ตามเงื่อนไขความครบถ้วนของข้อมูล Round 1
+        if (rankSubText) {
+            if (allTeamsHaveRound1) {
+                // เปลี่ยนคำตามบรีฟใหม่: จาก "อันดับปัจจุบัน: ที่ x" เป็น "อันดับที่ : x"
+                rankSubText.innerText = `อันดับที่ : ${actualRank}`;
+                rankSubText.classList.remove('hidden'); 
+            } else {
+                rankSubText.classList.add('hidden'); // คะแนนยังเข้าไม่ครบทุกทีม -> ซ่อนไว้ก่อน
+            }
+        }
+
+        // ตรวจสอบว่าทีมที่คลิกเปิดดูนี้ มีคะแนน Round 1 หรือไม่ (เพื่อประมวลผลกล่องรางวัลด้านใน)
         if (round1 !== '-' && round1 !== '' && round1 !== null) {
             
             if (congratsTitle) {
-                congratsTitle.innerText = `อันดับที่ : ${actualRank}`;
+                // หากคะแนนยังไม่ครบทุกทีมให้ขึ้นแค่คำว่า "อันดับที่ :" แต่ถ้าครบแล้วให้ใส่ลำดับจริงต่อท้ายเข้าไป
+                congratsTitle.innerText = allTeamsHaveRound1 ? `อันดับที่ : ${actualRank}` : "อันดับที่ :";
             }
 
             // 1. 🏅 ลอจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณเมื่อแข่งครบ 2 รอบ / บอร์ด Official)
