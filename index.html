@@ -397,7 +397,7 @@
     let currentHeaders = [];
     let currentData = [];
     let currentPage = 1;
-    let bestRookieIndex = -1; // เก็บตำแหน่ง Index ของทีมดาว ⭐ ที่ได้อันดับดีที่สุดในตาราง
+    let bestRookieIndex = -1; // เก็บตำแหน่ง Index ของทีมดาว ⭐ ที่ได้อันดับดีที่สุดในตาราง (และไม่มี *)
     const rowsPerPage = 15; 
     const columnsToHide = [1, 3, 6]; // คอลัมน์ที่ซ่อนไว้บนหน้าตารางหลัก (Team ID, Institution, Best Score)
 
@@ -496,10 +496,10 @@
             allTeamsHaveRound2 = currentData.every(row => row[r2Idx] !== null && row[r2Idx].toString().trim() !== "");
         }
 
-        // ค้นหาตำแหน่งของแชมป์ดาวรุ่ง (ตัวแรกที่มีดาว ⭐ ในชื่อทีม) เพื่อแจกรางวัล Best Rookie
+        // ค้นหาตำแหน่งของแชมป์ดาวรุ่ง (ตัวแรกที่มีดาว ⭐ และไม่มีเครื่องหมาย * ในชื่อทีม) เพื่อแจกรางวัล Best Rookie
         bestRookieIndex = currentData.findIndex(row => {
-            const teamName = (row[2] || '').toString();
-            return teamName.includes('⭐');
+            const teamName = (row[2] || '').toString().trim();
+            return teamName.includes('⭐') && !teamName.endsWith('*');
         });
 
         updateStatus(allTeamsHaveRound2);
@@ -565,16 +565,31 @@
         const endIndex = Math.min(startIndex + rowsPerPage, totalRecords);
         const pageData = currentData.slice(startIndex, startIndex + rowsPerPage);
 
+        // 🧮 คำนวณหา "อันดับการรับรางวัลจริง (Award Rank)" ล่วงหน้าสำหรับข้อมูลตารางรอบนี้
+        let awardRankCounter = 0;
+        const awardRanksMap = currentData.map((row) => {
+            const teamName = (row[2] || '').toString().trim();
+            if (teamName.endsWith('*')) {
+                return -1; // ไม่มีสิทธิ์ได้รางวัลอันดับ 1-10
+            } else {
+                awardRankCounter++;
+                return awardRankCounter;
+            }
+        });
+
         pageData.forEach((row, index) => {
             const realIndex = startIndex + index; 
             const tr = document.createElement('tr');
+            const teamName = (row[2] || '').toString().trim();
+            const currentAwardRank = awardRanksMap[realIndex];
             
             tr.className = 'clickable-row border-b border-slate-100 ';
             if (allTeamsHaveRound2) {
-                if (realIndex >= 0 && realIndex <= 2) {
-                    tr.className += 'bg-amber-50/90 hover:bg-amber-100/90'; 
-                } else if (realIndex >= 3 && realIndex <= 9) {
-                    tr.className += 'bg-sky-50/80 hover:bg-sky-100/80'; 
+                // เปลี่ยนมาพิจารณาไฮไลต์แถวสีตารางจากอันดับการรับรางวัลจริง (Award Rank) แทนลำดับแถวปกติ
+                if (currentAwardRank >= 1 && currentAwardRank <= 3) {
+                    tr.className += 'bg-amber-50/90 hover:bg-amber-100/90'; // อันดับรางวัล 1-3
+                } else if (currentAwardRank >= 4 && currentAwardRank <= 10) {
+                    tr.className += 'bg-sky-50/80 hover:bg-sky-100/80'; // อันดับรางวัล 4-10
                 } else {
                     tr.className += realIndex % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/40 hover:bg-slate-100'; 
                 }
@@ -582,7 +597,7 @@
                 tr.className += realIndex % 2 === 0 ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/40 hover:bg-slate-100';
             }
 
-            tr.addEventListener('click', () => openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2));
+            tr.addEventListener('click', () => openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2, currentAwardRank));
 
             const r1Value = r1Idx !== -1 ? parseFloat(row[r1Idx]) : NaN;
             const r2Value = r2Idx !== -1 ? parseFloat(row[r2Idx]) : NaN;
@@ -636,7 +651,7 @@
     }
 
     // === 🎯 ฟังก์ชันจัดการหน้าต่างรายละเอียดทีม (Pop-up Detail & Logic เวอร์ชันอัปเดตเกณฑ์รางวัล 2026) ===
-    function openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2) {
+    function openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2, currentAwardRank) {
         const medalCert = row[0] !== "" ? row[0] : '-';   
         const teamId = row[1] !== "" ? row[1] : '-';      
         const teamName = row[2] !== "" ? row[2] : '-';    
@@ -647,7 +662,8 @@
         const bestScore = row[bestIdx] !== "" ? row[bestIdx] : '-';
 
         const actualRank = realIndex + 1; 
-        const hasRookieStar = teamName.includes('⭐'); // ตรวจเช็กสิทธิ์ทีมดาวรุ่ง
+        const hasRookieStar = teamName.trim().includes('⭐'); 
+        const hasNoAwardAsterisk = teamName.trim().endsWith('*'); // ตรวจสอบตัวเครื่องหมายสิทธิ์ *
 
         if (document.getElementById('modalTeamId')) document.getElementById('modalTeamId').innerText = `TEAM ID: ${teamId}`;
         if (document.getElementById('modalTeamName')) document.getElementById('modalTeamName').innerText = teamName;
@@ -695,14 +711,19 @@
             allTeamsHaveRound1 = currentData.every(r => r[r1Idx] !== null && r[r1Idx].toString().trim() !== "" && r[r1Idx].toString().trim() !== "-");
         }
 
-        // 🚨 ปรับเปลี่ยน Wording และแสดง/ซ่อน ตามเงื่อนไขความครบถ้วนของข้อมูล Round 1
+        // 🚨 ปรับเปลี่ยน Wording และแสดง/ซ่อน ตามเงื่อนไขความครบถ้วนของข้อมูล Round 1 และสิทธิ์อันดับรางวัล
         if (rankSubText) {
             if (allTeamsHaveRound1) {
-                // เปลี่ยนคำตามบรีฟใหม่: จาก "อันดับปัจจุบัน: ที่ x" เป็น "อันดับที่ : x"
-                rankSubText.innerText = `อันดับที่ : ${actualRank}`;
-                rankSubText.classList.remove('hidden'); 
+                if (hasNoAwardAsterisk) {
+                    // หากมีเครื่องหมาย * จะไม่นำลำดับมาคิดเป็นอันดับรางวัล -> ซ่อนข้อความอันดับด้านบน
+                    rankSubText.classList.add('hidden');
+                } else {
+                    // ใช้ลำดับจากชุดตัวแปรอันดับการรับรางวัลจริง (currentAwardRank) มาแสดงผลให้ถูกต้อง
+                    rankSubText.innerText = `อันดับที่ : ${currentAwardRank}`;
+                    rankSubText.classList.remove('hidden'); 
+                }
             } else {
-                rankSubText.classList.add('hidden'); // คะแนนยังเข้าไม่ครบทุกทีม -> ซ่อนไว้ก่อน
+                rankSubText.classList.add('hidden'); 
             }
         }
 
@@ -710,27 +731,30 @@
         if (round1 !== '-' && round1 !== '' && round1 !== null) {
             
             if (congratsTitle) {
-                // หากคะแนนยังไม่ครบทุกทีมให้ขึ้นแค่คำว่า "อันดับที่ :" แต่ถ้าครบแล้วให้ใส่ลำดับจริงต่อท้ายเข้าไป
-                congratsTitle.innerText = allTeamsHaveRound1 ? `อันดับที่ : ${actualRank}` : "อันดับที่ :";
+                if (allTeamsHaveRound1) {
+                    congratsTitle.innerText = hasNoAwardAsterisk ? "อันดับที่ :" : `อันดับที่ : ${currentAwardRank}`;
+                } else {
+                    congratsTitle.innerText = "อันดับที่ :";
+                }
             }
 
-            // 1. 🏅 ลอจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณเมื่อแข่งครบ 2 รอบ / บอร์ด Official)
-            if (allTeamsHaveRound2 && actualRank <= 10) {
+            // 1. 🏅 ลอจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณจากอันดับรางวัลจริง และต้องไม่มีเครื่องหมาย *)
+            if (allTeamsHaveRound2 && !hasNoAwardAsterisk && currentAwardRank >= 1 && currentAwardRank <= 10) {
                 isEligibleForCongrat = true;
-                if (actualRank === 1 && reward1) {
+                if (currentAwardRank === 1 && reward1) {
                     reward1.classList.remove('hidden');
-                } else if (actualRank === 2 && reward2) {
+                } else if (currentAwardRank === 2 && reward2) {
                     reward2.classList.remove('hidden');
-                } else if (actualRank === 3 && reward3) {
+                } else if (currentAwardRank === 3 && reward3) {
                     reward3.classList.remove('hidden');
-                } else if (actualRank >= 4 && actualRank <= 10 && reward4To10) {
+                } else if (currentAwardRank >= 4 && currentAwardRank <= 10 && reward4To10) {
                     const dynRank = document.getElementById('certDynamicRank');
-                    if(dynRank) dynRank.innerText = actualRank;
+                    if(dynRank) dynRank.innerText = currentAwardRank;
                     reward4To10.classList.remove('hidden');
                 }
             }
 
-            // 2. 🥉 ลอจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze
+            // 2. 🥉 ลอจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze (ทีมที่มี * ยังคงได้รับเหรียญรางวัลปกติ)
             const cleanMedal = medalCert.toString().toLowerCase();
             if (cleanMedal.includes('gold') || cleanMedal.includes('silver') || cleanMedal.includes('bronze') || cleanMedal.includes('เหรียญ')) {
                 isEligibleForCongrat = true;
@@ -747,8 +771,8 @@
                 }
             }
 
-            // 3. 🎯 ลอจิกตรวจสอบรางวัลพิเศษกลุ่มดาวรุ่ง (Rookie Logic)
-            if (allTeamsHaveRound2 && hasRookieStar) {
+            // 3. 🎯 ลอจิกตรวจสอบรางวัลพิเศษกลุ่มดาวรุ่ง (Rookie Logic ต้องไม่มีเครื่องหมาย *)
+            if (allTeamsHaveRound2 && hasRookieStar && !hasNoAwardAsterisk) {
                 isEligibleForCongrat = true;
                 if(rewardRookie) {
                     rewardRookie.classList.remove('hidden');
@@ -885,8 +909,8 @@
             headers: ["Medal Certificate", "Team ID", "Team Name", "Institution", "Round 1", "Round 2", "Best Score"],
             data: [
                 ["🏅 Gold", "WRO-001", "Nexus Alpha", "โรงเรียนวิทยาศาสตร์เทคโนโลยี", "120", "150", "150"],
-                ["🏅 Gold", "WRO-002", "Cyber Knight ⭐", "สถาบันนวัตกรรมหุ่นยนต์", "150", "90", "150"],
-                ["🏅 Gold", "WRO-003", "Robo Genius", "วิทยาลัยเทคนิคศึกษา", "140", "140", "140"],
+                ["🏅 Gold", "WRO-002", "Cyber Knight *", "สถาบันนวัตกรรมหุ่นยนต์", "150", "90", "150"], // ทีมนี้มี * จะไม่มีสิทธิ์ได้รางวัลอันดับและ Rookie
+                ["🏅 Gold", "WRO-003", "Robo Genius ⭐", "วิทยาลัยเทคนิคศึกษา", "140", "140", "140"], // ได้ Best Rookie แทนเพราะอันดับสองโดนข้ามไป
                 ["🥈 Silver", "WRO-004", "Mecha Core", "โรงเรียนสาธิตประจำจังหวัด", "110", "135", "135"],
                 ["🥈 Silver", "WRO-005", "Byte Breaker", "สถาบันเทคโนโลยีเยาวชน", "130", "100", "130"],
                 ["🥉 Bronze", "WRO-006", "Apollo 11", "โรงเรียนวิทยาศาสตร์ภูมิภาค", "95", "120", "120"],
