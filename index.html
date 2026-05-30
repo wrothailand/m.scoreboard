@@ -154,46 +154,7 @@
 
         <div class="overflow-y-auto flex-1 p-5 md:p-6 space-y-5">
             
-            <div id="congratulationsSection" class="hidden flex-col p-4 bg-gradient-to-r from-amber-500/5 to-amber-600/10 rounded-2xl border-l-4 border-amber-500 shadow-sm text-slate-800">
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="text-xl md:text-2xl animate-bounce">🎉</span>
-                    <h4 class="text-base md:text-lg font-black text-amber-700 tracking-wide uppercase">Congratulations</h4>
-                </div>
-                
-                <div class="w-full text-xs md:text-sm font-medium space-y-2">
-                    <div id="rewardRank1To3" class="hidden flex-col gap-1 text-slate-700">
-                        <div class="font-bold text-slate-900 flex items-center gap-1.5 text-xs md:text-sm">
-                            <span>🏆</span> ทีมของท่านติด 1 ใน 3 ที่ได้ขึ้นรับรางวัล
-                        </div>
-                        <ul class="list-none pl-6 space-y-0.5 text-slate-600 text-xs md:text-sm">
-                            <li>- ประกาศนียบัตรลำดับ <span id="certRankPlace1" class="font-bold text-amber-600">-</span></li>
-                            <li>- สิทธิตัวแทนแข่งขันระดับชิงแชมป์ประเทศไทย</li>
-                        </ul>
-                    </div>
-
-                    <div id="rewardRank4To10" class="hidden flex-col gap-1 text-slate-700">
-                        <div class="font-bold text-slate-900 flex items-center gap-1.5 text-xs md:text-sm">
-                            <span>🎖️</span> ทีมของท่านติด 1 ใน 10 ที่ได้รับรางวัล
-                        </div>
-                        <ul class="list-none pl-6 space-y-0.5 text-slate-600 text-xs md:text-sm">
-                            <li>- ประกาศนียบัตรลำดับ <span id="certRankPlace2" class="font-bold text-amber-600">-</span></li>
-                        </ul>
-                    </div>
-
-                    <div id="rewardRookie" class="hidden flex-col gap-1 text-slate-700">
-                        <div id="titleBestRookie" class="hidden font-bold text-emerald-700 flex items-center gap-1.5 text-xs md:text-sm">
-                            <span>⭐</span> คุณได้รับรางวัล The Best of Rookie Team
-                        </div>
-                        <div id="titleGeneralRookie" class="hidden font-bold text-teal-700 flex items-center gap-1.5 text-xs md:text-sm">
-                            <span>✨</span> คุณได้รับประกาศนียบัตร Rookie Team
-                        </div>
-                        <ul id="rookieSubList" class="list-none pl-6 space-y-0.5 text-slate-600 text-xs md:text-sm">
-                            <li id="rookieRepText" class="hidden">- สิทธิตัวแทนแข่งขันระดับชิงแชมป์ประเทศไทย</li>
-                            <li id="rookieCertText" class="hidden">- ประกาศนียบัตรลำดับ <span id="rookieCertRankPlace" class="font-bold text-amber-600">-</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <div id="congratulationsSection"
 
             <div class="space-y-3">
                 <div class="flex items-start bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
@@ -586,8 +547,7 @@
         toggleBtnStyle(prevBtnMobile); toggleBtnStyle(nextBtnMobile);
     }
 
-    // === 🎯 ฟังก์ชันจัดการหน้าต่างรายละเอียดทีม (Pop-up Detail & Logic ไร้ข้อความซ้ำ) ===
-    // === 🎯 ฟังก์ชันจัดการหน้าต่างรายละเอียดทีม (Pop-up Detail & Logic ไร้ข้อความซ้ำ - เวอร์ชัน Responsive) ===
+    // === 🎯 ฟังก์ชันจัดการหน้าต่างรายละเอียดทีม (Pop-up Detail & Logic เวอร์ชันอัปเดตเกณฑ์รางวัล 2026) ===
     function openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2) {
         const medalCert = row[0] !== "" ? row[0] : '-';   
         const teamId = row[1] !== "" ? row[1] : '-';      
@@ -606,60 +566,80 @@
         document.getElementById('modalInstitution').innerText = institution;
         document.getElementById('modalMedal').innerText = medalCert;
         
-        // 🛠️ ปรับให้ยิงเข้าหา ID สรุปคะแนนตัวใหม่ ป้องกันปัญหาระบบหยุดทำงาน (Script Crash)
         document.getElementById('modalRound1Score').innerText = round1;
         document.getElementById('modalRound2Score').innerText = round2;
         document.getElementById('modalBestScore').innerText = bestScore;
 
         document.getElementById('modalTeamRankSub').innerText = `อันดับปัจจุบัน: ที่ ${actualRank}`;
 
+        // ดึง Element บล็อกแสดงความยินดี
         const congratSection = document.getElementById('congratulationsSection');
-        const reward1To3 = document.getElementById('rewardRank1To3');
+        const reward1 = document.getElementById('rewardRank1');
+        const reward2 = document.getElementById('rewardRank2');
+        const reward3 = document.getElementById('rewardRank3');
         const reward4To10 = document.getElementById('rewardRank4To10');
+        const rewardMedalBadge = document.getElementById('rewardMedalBadge');
         const rewardRookie = document.getElementById('rewardRookie');
         const titleBestRookie = document.getElementById('titleBestRookie');
         const titleGeneralRookie = document.getElementById('titleGeneralRookie');
 
-        // รีเซ็ตล้างสถานะกล่องสิทธิ์เดิมทั้งหมดก่อนเริ่มคำนวณใหม่
+        // 🔄 รีเซ็ตคลาสและซ่อน Element เดิมทั้งหมดก่อนทำการคำนวณใหม่
         congratSection.classList.add('hidden');
         congratSection.classList.remove('flex');
-        reward1To3.classList.add('hidden');
+        reward1.classList.add('hidden');
+        reward2.classList.add('hidden');
+        reward3.classList.add('hidden');
         reward4To10.classList.add('hidden');
+        rewardMedalBadge.classList.add('hidden');
         rewardRookie.classList.add('hidden');
         titleBestRookie.classList.add('hidden');
         titleGeneralRookie.classList.add('hidden');
         
-        document.getElementById('rookieRepText').classList.add('hidden');
-        document.getElementById('rookieCertText').classList.add('hidden');
-
         let isEligibleForCongrat = false;
 
-        // 1. 🏅 ประมวลผลรางวัลตามอันดับมาตรฐาน (Top 10 ของการแข่งขัน)
+        // 1. 🏅 ลอจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณเมื่อแข่งครบ 2 รอบ / บอร์ด Official)
         if (allTeamsHaveRound2 && actualRank <= 10) {
             isEligibleForCongrat = true;
-            if (actualRank >= 1 && actualRank <= 3) {
-                document.getElementById('certRankPlace1').innerText = actualRank;
-                reward1To3.classList.remove('hidden');
+            if (actualRank === 1) {
+                reward1.classList.remove('hidden');
+            } else if (actualRank === 2) {
+                reward2.classList.remove('hidden');
+            } else if (actualRank === 3) {
+                reward3.classList.remove('hidden');
             } else if (actualRank >= 4 && actualRank <= 10) {
-                document.getElementById('certRankPlace2').innerText = actualRank; 
+                document.getElementById('certDynamicRank').innerText = actualRank; // แสดงอันดับ x แบบไดนามิก
                 reward4To10.classList.remove('hidden');
             }
         }
 
-        // 2. 🎯 ประมวลผลรางวัลพิเศษกลุ่มดาวรุ่ง (Rookie Logic)
+        // 2. 🥉 ลอจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze (มีเงื่อนไขเพิ่มเติมป้ายเกียรติคุณ)
+        const cleanMedal = medalCert.toString().toLowerCase();
+        if (cleanMedal.includes('gold') || cleanMedal.includes('silver') || cleanMedal.includes('bronze') || cleanMedal.includes('เหรียญ')) {
+            isEligibleForCongrat = true;
+            rewardMedalBadge.classList.remove('hidden');
+            
+            // ปรับเปลี่ยนไอคอนตามกลุ่มเหรียญรางวัลให้สวยงาม
+            const iconEl = document.getElementById('medalRewardIcon');
+            if (cleanMedal.includes('gold')) iconEl.innerText = '🥇';
+            else if (cleanMedal.includes('silver')) iconEl.innerText = '🥈';
+            else if (cleanMedal.includes('bronze')) iconEl.innerText = '🥉';
+            else iconEl.innerText = '🏅';
+        }
+
+        // 3. 🎯 ลอจิกตรวจสอบรางวัลพิเศษกลุ่มดาวรุ่ง (Rookie Logic)
         if (allTeamsHaveRound2 && hasRookieStar) {
             isEligibleForCongrat = true;
             rewardRookie.classList.remove('hidden');
 
-            // แยกประเภทรางวัลของกลุ่มทีมดาวรุ่ง
+            // แยกประเภทคัดกลุ่มย่อยแชมป์ดาวรุ่ง / ดาวรุ่งทั่วไป
             if (realIndex === bestRookieIndex) {
-                titleBestRookie.classList.remove('hidden'); // อันดับดีที่สุด -> ได้รับรางวัลเด่น The Best of Rookie Team
+                titleBestRookie.classList.remove('hidden');
             } else {
-                titleGeneralRookie.classList.remove('hidden'); // ทีมดาวรุ่งอื่นๆ -> ได้รับประกาศนียบัตร Rookie Team
+                titleGeneralRookie.classList.remove('hidden');
             }
         }
 
-        // ยืนยันสิทธิ์เปิดหน้าต่างแสดงความยินดี
+        // ยืนยันสิทธิ์เปิดใช้งานกล่องแอนิเมชันแสดงความยินดี
         if (isEligibleForCongrat) {
             congratSection.classList.remove('hidden');
             congratSection.classList.add('flex');
