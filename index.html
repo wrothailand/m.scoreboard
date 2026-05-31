@@ -472,6 +472,7 @@
     }
 
     // === ฟังก์ชันจัดการและจัดระเบียบข้อมูลดิบที่ได้กลับมา ===
+    // === ฟังก์ชันจัดการและจัดระเบียบข้อมูลดิบที่ได้กลับมา ===
     function handleResponseData(result) {
         if (loading) loading.classList.add('hidden');
         if (tableBody) tableBody.parentElement.parentElement.classList.remove('hidden');
@@ -483,7 +484,23 @@
         }
 
         currentHeaders = result.headers || [];
-        currentData = result.data || [];
+        let rawData = result.data || [];
+
+        // 🟢 [แก้ไขเพิ่มตรงนี้] ทำการ Sort ข้อมูลใน Frontend บังคับให้ A-Z ขึ้นก่อนภาษาไทย (เหมือนคำสั่ง QUERY)
+        // สมมติคอลัมน์ที่ต้องการใช้เปรียบเทียบคือคอลัมน์ Index ที่ 1 (Team ID) หรือ Index ที่ 2 (Team Name)
+        // ในที่นี้แนะนำให้ใช้ Index ที่ 1 (Team ID) เพื่อให้ระบบเรียงตามรหัสทีมสากลก่อน
+        const sortColumnIndex = 1; 
+        
+        rawData.sort(function(a, b) {
+            let valA = (a[sortColumnIndex] || '').toString().trim();
+            let valB = (b[sortColumnIndex] || '').toString().trim();
+            
+            if (valA < valB) return -1;
+            if (valA > valB) return 1;
+            return 0;
+        });
+
+        currentData = rawData;
 
         // จับคู่อ้างอิงตำแหน่งคอลัมน์ของคะแนน
         const r1Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1'));
