@@ -362,7 +362,7 @@
     </footer>
 
     <div class="fixed bottom-2 right-4 text-slate-500 font-bold bg-white/80 border border-slate-200/80 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs md:text-sm shadow-sm z-50 pointer-events-none select-none font-mono tracking-wide">
-        v3.4.8
+        v3.4.17
     </div>
 
 </body>
@@ -472,7 +472,6 @@
     }
 
     // === ฟังก์ชันจัดการและจัดระเบียบข้อมูลดิบที่ได้กลับมา ===
-    // === ฟังก์ชันจัดการและจัดระเบียบข้อมูลดิบที่ได้กลับมา ===
     function handleResponseData(result) {
         if (loading) loading.classList.add('hidden');
         if (tableBody) tableBody.parentElement.parentElement.classList.remove('hidden');
@@ -484,23 +483,7 @@
         }
 
         currentHeaders = result.headers || [];
-        let rawData = result.data || [];
-
-        // 🟢 [แก้ไขเพิ่มตรงนี้] ทำการ Sort ข้อมูลใน Frontend บังคับให้ A-Z ขึ้นก่อนภาษาไทย (เหมือนคำสั่ง QUERY)
-        // สมมติคอลัมน์ที่ต้องการใช้เปรียบเทียบคือคอลัมน์ Index ที่ 1 (Team ID) หรือ Index ที่ 2 (Team Name)
-        // ในที่นี้แนะนำให้ใช้ Index ที่ 1 (Team ID) เพื่อให้ระบบเรียงตามรหัสทีมสากลก่อน
-        const sortColumnIndex = 1; 
-        
-        rawData.sort(function(a, b) {
-            let valA = (a[sortColumnIndex] || '').toString().trim();
-            let valB = (b[sortColumnIndex] || '').toString().trim();
-            
-            if (valA < valB) return -1;
-            if (valA > valB) return 1;
-            return 0;
-        });
-
-        currentData = rawData;
+        currentData = result.data || []; // ใช้ข้อมูลดิบตามลำดับดั้งเดิมจากหลังบ้านทันที
 
         // จับคู่อ้างอิงตำแหน่งคอลัมน์ของคะแนน
         const r1Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1'));
@@ -741,7 +724,7 @@
         // ตรวจสอบว่าทีมที่คลิกเปิดดูนี้ มีคะแนน Round 1 หรือไม่ (เพื่อประมวลผลกล่องรางวัลด้านใน)
         if (round1 !== '-' && round1 !== '' && round1 !== null) {
             
-            // 1. 🏅 ลอจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณจากอันดับรางวัลจริง และต้องไม่มีเครื่องหมาย *)
+            // 1. 🏅 ลоจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10 (คำนวณจากอันดับรางวัลจริง และต้องไม่มีเครื่องหมาย *)
             if (allTeamsHaveRound2 && !hasNoAwardAsterisk && currentAwardRank >= 1 && currentAwardRank <= 10) {
                 isEligibleForCongrat = true;
                 if (currentAwardRank === 1 && reward1) {
@@ -757,7 +740,7 @@
                 }
             }
 
-            // 2. 🥉 ลอจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze (ทีมที่มี * ยังคงได้รับเหรียญรางวัลปกติ)
+            // 2. 🥉 ลоจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze (ทีมที่มี * ยังคงได้รับเหรียญรางวัลปกติ)
             const cleanMedal = medalCert.toString().toLowerCase();
             if (cleanMedal.includes('gold') || cleanMedal.includes('silver') || cleanMedal.includes('bronze') || cleanMedal.includes('เหรียญ')) {
                 isEligibleForCongrat = true;
@@ -774,7 +757,7 @@
                 }
             }
 
-            // 3. 🎯 ลอจิกตรวจสอบรางวัลพิเศษกลุ่มดาวรุ่ง (Rookie Logic ต้องไม่มีเครื่องหมาย *)
+            // 3. 🎯 ลоจิกตรวจสอบรางวัลพิเศษกลุ่มดาวรุ่ง (Rookie Logic ต้องไม่มีเครื่องหมาย *)
             if (allTeamsHaveRound2 && hasRookieStar && !hasNoAwardAsterisk) {
                 isEligibleForCongrat = true;
                 if(rewardRookie) {
