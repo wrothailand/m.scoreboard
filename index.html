@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WRO 2026 Leaderboard</title>
+    <title>WRO 2026 Leaderboard - Glassmorphism Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,8 +14,34 @@
         .dot-blink { animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        .clickable-row { cursor: pointer; transition: all 0.2s ease; }
-        .clickable-row:hover { background-color: rgba(255, 255, 255, 0.08); transform: translateY(-1px); box-shadow: inset 4px 0 0 #10b981; }
+        /* --- สไตล์ตารางแผ่นกระจกฝ้าฉลุแสง (Glassmorphism Table) --- */
+        .glass-row-odd {
+            background-color: rgba(255, 255, 255, 0.015);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-row-even {
+            background-color: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* เอฟเฟกต์สะท้อนแสงและยกตัวลอยเวลาเมาส์ชี้ */
+        .glass-row-hover {
+            cursor: pointer;
+        }
+        .glass-row-hover:hover {
+            background-color: rgba(255, 255, 255, 0.10) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5), 
+                        inset 0 1px 0 0 rgba(255, 255, 255, 0.2), /* แสงเงาที่ขอบบนของแถว */
+                        inset 4px 0 0 0 #10b981; /* เส้นเรืองแสงสีเขียวมิ้นต์ด้านซ้ายสุด */
+        }
+
+        /* สำหรับหน้าต่างป็อปอัป */
         .modal-animate { animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes scaleUp { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         
@@ -69,49 +95,93 @@
         <!-- Table Status Bar -->
         <div class="flex justify-between items-center mb-4 px-1">
             <div class="flex flex-col">
-                <h2 id="tableTitle" class="text-xl font-semibold text-slate-200">กรุณาเลือกข้อมูลด้านบน</h2>
-                <p id="tableSubtitle" class="text-xs text-emerald-400 font-medium hidden mt-0.5">💡 สามารถคลิกที่แถวของทีม เพื่อดูรายละเอียดแบบเต็มได้</p>
+                <h2 id="tableTitle" class="text-xl font-semibold text-slate-200">ผลการจัดอันดับคะแนน</h2>
+                <p id="tableSubtitle" class="text-xs text-emerald-400 font-medium mt-0.5">💡 สามารถคลิกที่แถวของทีม เพื่อดูรายละเอียดแบบเต็มได้</p>
             </div>
-            <div id="statusBadge" class="hidden items-center bg-white/[0.06] border border-white/10 px-4 py-1.5 rounded-full shadow-md text-sm font-semibold text-slate-300">
+            <div id="statusBadge" class="flex items-center bg-white/[0.06] border border-white/10 px-4 py-1.5 rounded-full shadow-md text-sm font-semibold text-slate-300">
                 <span id="statusDot" class="w-3 h-3 rounded-full mr-2 dot-blink bg-amber-500"></span>
                 <span id="statusText">Unofficial</span>
             </div>
         </div>
 
-        <!-- Score Table Box (Glassmorphism) -->
-        <div class="bg-white/[0.04] backdrop-blur-md rounded-2xl shadow-xl border border-white/[0.08] overflow-hidden">
+        <!-- Score Table Box (Glassmorphism System) -->
+        <div class="bg-white/[0.02] backdrop-blur-md rounded-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] border border-white/[0.08] overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr id="tableHeaders" class="bg-white/[0.04] border-b border-white/[0.08] text-slate-200 text-base uppercase tracking-wider font-bold">
-                            <th class="p-4 md:p-5 text-center opacity-70">ไม่มีข้อมูลเลือกไว้</th>
+                        <!-- หัวตารางแผ่นกระจกทึบแสงเพื่อให้สะดุดตาชัดเจน -->
+                        <tr id="tableHeaders" class="bg-white/[0.07] border-b border-white/10 text-slate-200 text-sm md:text-base font-bold uppercase tracking-wider">
+                            <th class="p-4 md:p-5 text-center w-20">อันดับ</th>
+                            <th class="p-4 md:p-5">ชื่อทีม</th>
+                            <th class="p-4 md:p-5">สถาบัน / โรงเรียน</th>
+                            <th class="p-4 md:p-5 text-center w-28">Round 1</th>
+                            <th class="p-4 md:p-5 text-center w-28">Round 2</th>
+                            <th class="p-4 md:p-5 text-center w-32">Best Score</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-white/[0.04] text-base text-slate-300">
-                        <tr>
-                            <td class="p-8 text-center text-slate-400 font-medium">โปรดเลือก รุ่น และ ภูมิภาค เพื่อดึงคะแนนล่าสุด</td>
+                    <tbody id="tableBody" class="divide-y divide-white/[0.05] text-base text-slate-300">
+                        
+                        <!-- ตัวอย่างแถวที่ 1 (กระจกคี่ + เอฟเฟกต์โฮเวอร์) -->
+                        <tr class="glass-row-odd glass-row-hover" onclick="openModal('TEAM-01', 'RoboKing 👑', '1', 'โรงเรียนวิทยาการหุ่นยนต์คอมพิวเตอร์', '100', '85', '100', 'Gold Certificate')">
+                            <td class="p-4 md:p-5 text-center font-black text-amber-400 text-lg">1</td>
+                            <td class="p-4 md:p-5 font-bold text-white flex items-center gap-1">RoboKing <span class="text-amber-400 text-xs">⭐</span></td>
+                            <td class="p-4 md:p-5 text-slate-400 font-medium">โรงเรียนวิทยาการหุ่นยนต์คอมพิวเตอร์</td>
+                            <td class="p-4 md:p-5 text-center text-slate-400 font-medium">100</td>
+                            <td class="p-4 md:p-5 text-center text-slate-400 font-medium">85</td>
+                            <td class="p-4 md:p-5 text-center font-black text-emerald-400 text-lg">100</td>
                         </tr>
+
+                        <!-- ตัวอย่างแถวที่ 2 (กระจกคู่ + เอฟเฟกต์โฮเวอร์) -->
+                        <tr class="glass-row-even glass-row-hover" onclick="openModal('TEAM-02', 'CyberBot X', '2', 'สถาบันนวัตกรรมเยาวชนแห่งชาติ', '65', '95', '95', 'Gold Certificate')">
+                            <td class="p-4 md:p-5 text-center font-black text-slate-300 text-lg">2</td>
+                            <td class="p-4 md:p-5 font-bold text-white">CyberBot X</td>
+                            <td class="p-4 md:p-5 text-slate-400 font-medium">สถาบันนวัตกรรมเยาวชนแห่งชาติ</td>
+                            <td class="p-4 md:p-5 text-center text-slate-400 font-medium">65</td>
+                            <td class="p-4 md:p-5 text-center text-slate-400 font-medium">95</td>
+                            <td class="p-4 md:p-5 text-center font-black text-emerald-400 text-lg">95</td>
+                        </tr>
+
+                        <!-- ตัวอย่างแถวที่ 3 (กระจกคี่ + เอฟเฟกต์โฮเวอร์) -->
+                        <tr class="glass-row-odd glass-row-hover" onclick="openModal('TEAM-03', 'Alpha Gears', '3', 'โรงเรียนเทคโนโลยีล้ำยุควิทยา', '90', '40', '90', 'Gold Certificate')">
+                            <td class="p-4 md:p-5 text-center font-black text-orange-400 text-lg">3</td>
+                            <td class="p-4 md:p-5 font-bold text-white">Alpha Gears</td>
+                            <td class="p-4 md:p-5 text-slate-400 font-medium">โรงเรียนเทคโนโลยีล้ำยุควิทยา</td>
+                            <td class="p-4 md:p-5 text-center text-slate-400 font-medium">90</td>
+                            <td class="p-4 md:p-5 text-center text-slate-400 font-medium">40</td>
+                            <td class="p-4 md:p-5 text-center font-black text-emerald-400 text-lg">90</td>
+                        </tr>
+
+                        <!-- ตัวอย่างแถวที่ 4 (กระจกคู่ + เอฟเฟกต์โฮเวอร์) -->
+                        <tr class="glass-row-even glass-row-hover" onclick="openModal('TEAM-04', 'Beta Runner', '4', 'สถาบันหุ่นยนต์ภาคใต้', '55', '55', '55', 'Silver Certificate')">
+                            <td class="p-4 md:p-5 text-center font-bold text-slate-400">4</td>
+                            <td class="p-4 md:p-5 font-bold text-white">Beta Runner</td>
+                            <td class="p-4 md:p-5 text-slate-400 font-medium">สถาบันหุ่นยนต์ภาคใต้</td>
+                            <td class="p-4 md:p-5 text-center text-slate-400 font-medium">55</td>
+                            <td class="p-4 md:p-5 text-center text-slate-400 font-medium">55</td>
+                            <td class="p-4 md:p-5 text-center font-black text-emerald-400 text-lg">55</td>
+                        </tr>
+
                     </tbody>
                 </table>
             </div>
 
             <!-- Pagination Container -->
-            <div id="paginationContainer" class="hidden bg-black/20 px-4 py-4 flex items-center justify-between border-t border-white/[0.06] sm:px-6 text-base">
+            <div id="paginationContainer" class="bg-black/20 px-4 py-4 flex items-center justify-between border-t border-white/[0.06] sm:px-6 text-base">
                 <div class="flex-1 flex justify-between sm:hidden">
-                    <button id="prevBtnMobile" class="relative inline-flex items-center px-4 py-2 border border-white/10 font-medium rounded-xl text-slate-300 bg-white/[0.05] hover:bg-white/10 transition-colors">ก่อนหน้า</button>
-                    <button id="nextBtnMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-white/10 font-medium rounded-xl text-slate-300 bg-white/[0.05] hover:bg-white/10 transition-colors">ถัดไป</button>
+                    <button class="relative inline-flex items-center px-4 py-2 border border-white/10 font-medium rounded-xl text-slate-300 bg-white/[0.05] hover:bg-white/10 transition-colors">ก่อนหน้า</button>
+                    <button class="ml-3 relative inline-flex items-center px-4 py-2 border border-white/10 font-medium rounded-xl text-slate-300 bg-white/[0.05] hover:bg-white/10 transition-colors">ถัดไป</button>
                 </div>
                 <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                     <div>
                         <p class="text-sm text-slate-400 font-medium">
-                            แสดงรายการที่ <span id="startRange" class="font-bold text-white">0</span> ถึง <span id="endRange" class="font-bold text-white">0</span> จากทั้งหมด <span id="totalRows" class="font-bold text-white">0</span> รายการ
+                            แสดงรายการที่ <span class="font-bold text-white">1</span> ถึง <span class="font-bold text-white">4</span> จากทั้งหมด <span class="font-bold text-white">4</span> รายการ
                         </p>
                     </div>
                     <div>
                         <nav class="relative z-0 inline-flex rounded-xl shadow-sm -space-x-px" aria-label="Pagination">
-                            <button id="prevBtn" class="relative inline-flex items-center px-4 py-2 rounded-l-xl border border-white/10 bg-white/[0.05] font-medium text-slate-300 hover:bg-white/10 transition-colors">ก่อนหน้า</button>
-                            <span id="pageNumberDisplay" class="bg-white/[0.02] border-white/10 text-white relative inline-flex items-center px-4 py-2 border font-semibold">หน้า 1</span>
-                            <button id="nextBtn" class="relative inline-flex items-center px-4 py-2 rounded-r-xl border border-white/10 bg-white/[0.05] font-medium text-slate-300 hover:bg-white/10 transition-colors">ถัดไป</button>
+                            <button class="relative inline-flex items-center px-4 py-2 rounded-l-xl border border-white/10 bg-white/[0.05] font-medium text-slate-300 hover:bg-white/10 transition-colors">ก่อนหน้า</button>
+                            <span class="bg-white/[0.02] border-white/10 text-white relative inline-flex items-center px-4 py-2 border font-semibold">หน้า 1</span>
+                            <button class="relative inline-flex items-center px-4 py-2 rounded-r-xl border border-white/10 bg-white/[0.05] font-medium text-slate-300 hover:bg-white/10 transition-colors">ถัดไป</button>
                         </nav>
                     </div>
                 </div>
@@ -119,7 +189,7 @@
         </div>
 
         <!-- Remarks -->
-        <div id="remarkBox" class="hidden mt-4 bg-white/[0.04] backdrop-blur-md p-5 rounded-2xl shadow-lg border border-white/[0.08] text-sm md:text-base text-slate-300 space-y-2.5 font-medium">
+        <div id="remarkBox" class="mt-4 bg-white/[0.04] backdrop-blur-md p-5 rounded-2xl shadow-lg border border-white/[0.08] text-sm md:text-base text-slate-300 space-y-2.5 font-medium">
             <div class="flex items-start">
                 <span class="font-bold text-white min-w-[130px]">Remark :</span>
                 <span class="text-slate-400">⭐ = Team Rookie</span>
@@ -135,19 +205,13 @@
                 </div>
             </div>
         </div>
-
-        <!-- Loading -->
-        <div id="loading" class="hidden text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent mb-3"></div>
-            <p class="text-base text-slate-400 font-medium">กำลังดึงข้อมูลสดจากระบบ...</p>
-        </div>
     </main>
 
     <!-- Team Detail Modal -->
     <div id="teamDetailModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden items-center justify-center p-4 transition-all duration-300">
         <div class="bg-slate-900/90 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-animate border border-white/10 max-h-[92vh] flex flex-col backdrop-blur-xl">
 
-            <div id="normalModalHeader" class="bg-white/[0.04] text-white px-5 py-4 md:px-6 md:py-5 flex-shrink-0 border-b border-white/[0.06]">
+            <div class="bg-white/[0.04] text-white px-5 py-4 md:px-6 md:py-5 flex-shrink-0 border-b border-white/[0.06]">
                 <div class="flex justify-between items-start gap-4">
                     <div class="min-w-0 flex-1">
                         <span id="modalTeamId" class="inline-block bg-emerald-600 text-white text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md tracking-wider uppercase shadow-sm">TEAM ID: -</span>
@@ -163,98 +227,6 @@
             </div>
 
             <div class="overflow-y-auto flex-1 p-5 md:p-6 space-y-5">
-
-                <div id="congratulationsSection" class="hidden flex-col p-4 bg-gradient-to-r from-amber-500/[0.05] to-amber-500/[0.12] rounded-2xl border-l-4 border-amber-500 shadow-inner text-slate-200">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="text-xl md:text-2xl animate-bounce">🎉</span>
-                        <h4 class="text-base md:text-lg font-black text-amber-400 tracking-wide uppercase">Congratulations</h4>
-                    </div>
-
-                    <div class="w-full text-xs md:text-sm font-medium space-y-3">
-                        <div id="rewardRank1" class="hidden flex-col gap-1 text-slate-300">
-                            <div class="font-bold text-white flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
-                                <span>🏆</span> ทีมของท่านติด 1 ใน 3 ที่ได้ขึ้นรับรางวัล
-                            </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
-                                <li>- โล่รางวัลชนะเลิศอันดับ 1</li>
-                                <li>- โล่รางวัลชนะเลิศ</li>
-                                <li>- เหรียญทอง WRO 2026</li>
-                                <li>- ประกาศนียบัตรรางวัลชนะเลิศ (Digital)</li>
-                                <li>- ป้ายประกาศเกียรติคุณ</li>
-                                <li>- ทุนการศึกษา มูลค่า 6,000 บาท</li>
-                                <li>- สิทธิในการเข้าร่วมการแข่งขัน WRO 2026 รอบชิงแชมป์ประเทศไทย</li>
-                            </ul>
-                        </div>
-
-                        <div id="rewardRank2" class="hidden flex-col gap-1 text-slate-300">
-                            <div class="font-bold text-white flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
-                                <span>🏆</span> ทีมของท่านติด 1 ใน 3 ที่ได้ขึ้นรับรางวัล
-                            </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
-                                <li>- โล่รางวัลชนะเลิศอันดับ 2</li>
-                                <li>- โล่รางวัลรองชนะเลิศอันดับ 1</li>
-                                <li>- เหรียญเงิน WRO 2026</li>
-                                <li>- ประกาศนียบัตรรางวัลรองชนะเลิศอันดับ 1 (Digital)</li>
-                                <li>- ป้ายประกาศเกียรติคุณ</li>
-                                <li>- ทุนการศึกษา มูลค่า 4,000 บาท</li>
-                                <li>- สิทธิในการเข้าร่วมการแข่งขัน WRO 2026 รอบชิงแชมป์ประเทศไทย</li>
-                            </ul>
-                        </div>
-
-                        <div id="rewardRank3" class="hidden flex-col gap-1 text-slate-300">
-                            <div class="font-bold text-white flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
-                                <span>🏆</span> ทีมของท่านติด 1 ใน 3 ที่ได้ขึ้นรับรางวัล
-                            </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
-                                <li>- โล่รางวัลชนะเลิศอันดับ 3</li>
-                                <li>- โล่รางวัลรองชนะเลิศอันดับ 2</li>
-                                <li>- เหรียญทองแดง WRO 2026</li>
-                                <li>- ประกาศนียบัตรรางวัลรองชนะเลิศอันดับ 2 (Digital)</li>
-                                <li>- ป้ายประกาศเกียรติคุณ</li>
-                                <li>- ทุนการศึกษา มูลค่า 3,000 บาท</li>
-                                <li>- สิทธิในการเข้าร่วมการแข่งขัน WRO 2026 รอบชิงแชมป์ประเทศไทย</li>
-                            </ul>
-                        </div>
-
-                        <div id="rewardRank4To10" class="hidden flex-col gap-1 text-slate-300">
-                            <div class="font-bold text-white flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
-                                <span>🎖️</span> ทีมของท่านติด 1 ใน 10 ที่ได้ขึ้นรับรางวัล
-                            </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
-                                <li>- เหรียญรางวัลชมเชย WRO 2026</li>
-                                <li>- ประกาศนียบัตรรางวัลอันดับ <span id="certDynamicRank" class="font-bold text-white">-</span> (Digital)</li>
-                            </ul>
-                        </div>
-
-                        <div id="rewardMedalBadge" class="hidden flex-col gap-1 text-slate-300 pt-1 border-t border-white/10">
-                            <div class="font-bold text-white flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
-                                <span id="medalRewardIcon">🏅</span> รางวัลประเภทเกียรติบัตรเหรียญรางวัล
-                            </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
-                                <li>- ป้ายประกาศเกียรติคุณ</li>
-                            </ul>
-                        </div>
-
-                        <div id="rewardRookie" class="hidden flex-col gap-1 text-slate-300 pt-1 border-t border-white/10">
-                            <div id="titleBestRookie" class="hidden flex-col gap-0.5">
-                                <div class="font-bold text-emerald-400 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
-                                    <span>⭐</span> คุณได้รับรางวัล The Best of Rookie Team
-                                </div>
-                                <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
-                                    <li>- ถ้วยรางวัล Rookie Team Award</li>
-                                    <li>- ประกาศนียบัตร Rookie Team (Digital)</li>
-                                </ul>
-                            </div>
-
-                            <div id="titleGeneralRookie" class="hidden flex-col gap-0.5">
-                                <div class="font-bold text-teal-400 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
-                                    <span>✨</span> คุณได้รับประกาศนียบัตร Rookie Team (Digital)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="space-y-3">
                     <div class="flex items-start bg-white/[0.03] p-3.5 rounded-2xl border border-white/[0.06]">
                         <div class="bg-white/[0.05] p-2 rounded-xl text-emerald-400 mr-3 mt-0.5 flex-shrink-0">
@@ -280,7 +252,7 @@
                                 <span class="inline-block text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded-md font-bold flex-shrink-0">คลิกดูเกณฑ์</span>
                             </p>
                             <p id="modalMedal" class="text-sm md:text-base font-bold text-white mt-0.5 flex items-center justify-between gap-2">
-                                <span class="truncate">-</span>
+                                <span id="modalMedalText" class="truncate">-</span>
                                 <svg class="w-4 h-4 text-slate-400 group-hover:text-amber-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
@@ -306,12 +278,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="pt-1">
-                    <p class="text-xs text-amber-300 bg-amber-500/[0.08] rounded-xl px-3.5 py-2.5 font-semibold border border-amber-500/20 text-center leading-relaxed">
-                        ⚠️ อันดับคะแนนจะจัดหลังจากคณะกรรมการตรวจสอบความถูกต้องเรียบร้อยแล้ว
-                    </p>
-                </div>
             </div>
 
             <div class="bg-white/[0.02] px-5 py-3.5 md:px-6 md:py-4 flex justify-end items-center border-t border-white/[0.06] flex-shrink-0">
@@ -327,7 +293,7 @@
         <div class="bg-slate-900 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-animate border border-white/10">
             <div class="bg-white/[0.04] text-white px-5 py-4 flex justify-between items-center border-b border-white/[0.06]">
                 <h4 class="text-base font-bold flex items-center gap-2">
-                    🏆 เกณฑ์การจัดระดับเหรียญรางวัลรางวัล
+                    🏆 เกณฑ์การจัดระดับเหรียญรางวัล
                 </h4>
                 <button onclick="closeMedalInfoModal()" class="text-slate-400 hover:text-white bg-white/[0.06] p-1.5 rounded-full transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -379,9 +345,7 @@
     <div class="fixed bottom-2 right-4 text-slate-400 font-bold bg-slate-900/80 border border-white/10 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs md:text-sm shadow-md z-50 pointer-events-none select-none font-mono tracking-wide">
         v3.4.17
     </div>
-
 </body>
-</html>
     <script>
     // 🔗 1. วางลิงก์ Web App URL ของ Google Apps Script ที่ได้จากการ Deploy (ทุกคน/Anyone) ตรงนี้
     const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbye2Ei6OXOzyoYh9gr7vdB6yLmFTzvtp57U0NndD9S1vATSf3xdApVFSzn_6M6AYaU/exec"; 
