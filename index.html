@@ -12,7 +12,7 @@
             font-family: 'Prompt', sans-serif; 
         }
         .dot-blink { animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100__ { opacity: 0.3; } 50__ { opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
         .clickable-row { cursor: pointer; transition: all 0.2s ease; }
         .clickable-row:hover { transform: translateY(-1px); background-color: rgba(255, 255, 255, 0.08) !important; }
         .modal-animate { animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -25,21 +25,24 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(6, 182, 212, 0.5); }
     </style>
 </head>
-<body class="text-slate-200 min-h-screen flex flex-col justify-between bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 bg-fixed pb-8 text-base">
+<body class="text-slate-200 min-h-screen flex flex-col justify-between bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 bg-fixed text-base overflow-x-hidden">
     
-    <header class="relative bg-slate-900/40 backdrop-blur-xl border border-cyan-500/30 py-8 px-4 shadow-lg rounded-t-3xl mx-2 md:mx-6 mt-4 flex items-center justify-center min-h-[120px]">
-        <div class="absolute left-4 md:left-8 flex items-center justify-center">
-            <img src="https://lh3.googleusercontent.com/d/1jly-uEyURhUVCr1epKKDkjtlNRMKhWTq" alt="WRO Logo" class="h-14 md:h-20 w-auto object-contain drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]">
+    <!-- Header: เปลี่ยนเป็น Universal Full-Width Edge-to-Edge Bar -->
+    <header class="relative bg-slate-900/50 backdrop-blur-xl border-b border-cyan-500/30 py-6 px-4 sm:px-6 lg:px-10 shadow-xl w-full flex items-center justify-center min-h-[100px] z-10">
+        <div class="absolute left-4 sm:left-6 lg:left-10 flex items-center justify-center">
+            <img src="https://lh3.googleusercontent.com/d/1jly-uEyURhUVCr1epKKDkjtlNRMKhWTq" alt="WRO Logo" class="h-12 sm:h-16 lg:h-20 w-auto object-contain drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]">
         </div>
         <div class="text-center">
-            <h1 class="text-3xl md:text-5xl font-black tracking-wider bg-gradient-to-r from-cyan-400 via-teal-200 to-indigo-400 bg-clip-text text-transparent drop-shadow-sm">LEADERBOARD</h1>
-            <p class="text-cyan-300 text-base md:text-lg mt-1.5 tracking-wider font-semibold opacity-90">World Robot Olympiad 2026</p>
+            <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-wider bg-gradient-to-r from-cyan-400 via-teal-200 to-indigo-400 bg-clip-text text-transparent drop-shadow-sm">LEADERBOARD</h1>
+            <p class="text-cyan-300 text-xs sm:text-base lg:text-lg mt-1 tracking-wider font-semibold opacity-90">World Robot Olympiad 2026</p>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto w-full px-4 py-6 flex-grow">
+    <!-- Main Content: ขยายพื้นที่เต็มเหนี่ยว รองรับทุกหน้าจอขนาดใหญ่ -->
+    <main class="w-full max-w-full px-4 sm:px-6 lg:px-10 py-6 flex-grow flex flex-col justify-start">
+        
         <!-- Dropdown Selection -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 w-full">
             <div class="bg-slate-900/40 backdrop-blur-xl p-4 rounded-2xl border border-cyan-500/30">
                 <label class="block text-xs font-semibold text-cyan-400/80 mb-1 tracking-wider">รุ่นการแข่งขัน (Category)</label>
                 <select id="categorySelect" class="w-full bg-slate-950/60 border border-slate-700/60 rounded-xl p-3 text-lg font-medium text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all cursor-pointer">
@@ -63,10 +66,10 @@
         </div>
 
         <!-- Title & Status -->
-        <div class="flex justify-between items-center mb-4 px-1">
+        <div class="flex justify-between items-center mb-4 px-1 w-full">
             <div class="flex flex-col">
-                <h2 id="tableTitle" class="text-xl font-bold text-white tracking-wide">กรุณาเลือกข้อมูลด้านบน</h2>
-                <p id="tableSubtitle" class="text-xs text-cyan-400 font-medium hidden mt-0.5">💡 สามารถคลิกที่แถวของทีม เพื่อดูรายละเอียดแบบเต็มได้</p>
+                <h2 id="tableTitle" class="text-xl sm:text-2xl font-bold text-white tracking-wide">กรุณาเลือกข้อมูลด้านบน</h2>
+                <p id="tableSubtitle" class="text-xs sm:text-sm text-cyan-400 font-medium hidden mt-0.5">💡 สามารถคลิกที่แถวของทีม เพื่อดูรายละเอียดแบบเต็มได้</p>
             </div>
             <div id="statusBadge" class="hidden items-center bg-slate-900/60 backdrop-blur-md border border-slate-700/80 px-4 py-1.5 rounded-full text-sm font-semibold">
                 <span id="statusDot" class="w-3 h-3 rounded-full mr-2 dot-blink"></span>
@@ -74,9 +77,9 @@
             </div>
         </div>
 
-        <!-- Leaderboard Table Container -->
-        <div class="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-purple-500/20 overflow-hidden">
-            <div class="overflow-x-auto">
+        <!-- Leaderboard Table Container: ปรับขยายเต็มความกว้างสไตล์ Dashboard -->
+        <div class="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-purple-500/20 overflow-hidden w-full flex flex-col justify-between flex-grow shadow-2xl">
+            <div class="overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr id="tableHeaders" class="bg-slate-950/80 border-b border-purple-500/20 text-cyan-300 text-base uppercase tracking-wider font-bold transition-colors duration-300">
@@ -92,7 +95,7 @@
             </div>
             
             <!-- Pagination Container -->
-            <div id="paginationContainer" class="hidden bg-slate-950/40 px-4 py-4 flex items-center justify-between border-t border-slate-800/80 sm:px-6 text-base">
+            <div id="paginationContainer" class="hidden bg-slate-950/40 px-4 py-4 flex items-center justify-between border-t border-slate-800/80 sm:px-6 text-base w-full">
                 <div class="flex-1 flex justify-between sm:hidden">
                     <button id="prevBtnMobile" class="relative inline-flex items-center px-4 py-2 border border-slate-700 font-medium rounded-xl text-slate-300 bg-slate-900/80 hover:bg-slate-800 focus:outline-none">ก่อนหน้า</button>
                     <button id="nextBtnMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-700 font-medium rounded-xl text-slate-300 bg-slate-900/80 hover:bg-slate-800 focus:outline-none">ถัดไป</button>
@@ -115,7 +118,7 @@
         </div>
 
         <!-- Remarks Section -->
-        <div id="remarkBox" class="hidden mt-4 bg-slate-900/40 backdrop-blur-xl p-5 rounded-2xl border border-purple-500/20 text-sm md:text-base text-slate-300 space-y-2.5 font-medium">
+        <div id="remarkBox" class="hidden mt-4 bg-slate-900/40 backdrop-blur-xl p-5 rounded-2xl border border-purple-500/20 text-sm md:text-base text-slate-300 space-y-2.5 font-medium w-full">
             <div class="flex items-start">
                 <span class="font-bold text-cyan-400 min-w-[130px]">Remark :</span>
                 <span class="text-slate-300">⭐ = Team Rookie</span>
@@ -133,7 +136,7 @@
         </div>
 
         <!-- Loading Component -->
-        <div id="loading" class="hidden text-center py-12">
+        <div id="loading" class="hidden text-center py-12 w-full">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-400 border-t-transparent mb-3"></div>
             <p class="text-base text-slate-400 font-medium">กำลังดึงข้อมูลสดจากระบบ...</p>
         </div>
@@ -241,7 +244,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Info Grid -->
                 <div class="space-y-3">
                     <div class="flex items-start bg-slate-950/40 p-3.5 rounded-2xl border border-slate-800">
@@ -275,7 +277,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Scores Overview -->
                 <div>
                     <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Performance Overview</p>
@@ -294,7 +295,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="pt-1">
                     <p class="text-xs text-amber-300 bg-amber-500/10 rounded-xl px-3.5 py-2.5 font-semibold border border-amber-500/20 text-center leading-relaxed">
                         ⚠️ อันดับคะแนนจะจัดหลังจากคณะกรรมการตรวจสอบความถูกต้องเรียบร้อยแล้ว
@@ -309,7 +309,7 @@
         </div>
     </div>
 
-    <!-- Medal Critera Info Modal -->
+    <!-- Medal Criteria Info Modal -->
     <div id="medalInfoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[70] hidden items-center justify-center p-4 transition-all duration-300">
         <div class="bg-slate-900/90 backdrop-blur-xl w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-animate border border-cyan-500/30 text-slate-200">
             <div class="bg-slate-950/60 px-5 py-4 flex justify-between items-center border-b border-slate-800">
@@ -357,19 +357,18 @@
         </div>
     </div>
 
-    <footer class="bg-slate-900/40 backdrop-blur-xl text-slate-400 text-center py-5 text-sm font-medium mt-8 border-t border-cyan-500/20 tracking-wider shadow-inner rounded-b-3xl mx-2 md:mx-6 mb-2">
+    <!-- Footer: เปลี่ยนเป็น Full-Width Edge-to-Edge Bar -->
+    <footer class="bg-slate-900/50 backdrop-blur-xl text-slate-400 text-center py-4 text-sm font-medium border-t border-cyan-500/20 tracking-wider shadow-inner w-full mt-auto">
         World Robot Olympiad 2026
     </footer>
     
     <div class="fixed bottom-2 right-4 text-cyan-400 font-bold bg-slate-950/80 border border-cyan-500/30 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs md:text-sm shadow-sm z-50 pointer-events-none select-none font-mono tracking-wide">
         v3.4.17
     </div>
-
 </body>
 <script>
-    // 🔗 1. วางลิงก์ Web App URL ของ Google Apps Script ที่ได้จากการ Deploy (ทุกคน/Anyone) ตรงนี้
     const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbye2Ei6OXOzyoYh9gr7vdB6yLmFTzvtp57U0NndD9S1vATSf3xdApVFSzn_6M6AYaU/exec"; 
-    // === ตัวแปรอ้างอิง Element หน้า UI ===
+    
     const categorySelect = document.getElementById('categorySelect');
     const regionSelect = document.getElementById('regionSelect');
     const tableTitle = document.getElementById('tableTitle');
@@ -390,14 +389,14 @@
     const startRange = document.getElementById('startRange');
     const textEndRange = document.getElementById('endRange');
     const totalRows = document.getElementById('totalRows');
-    // === ตัวแปรสำหรับระบบ Pagination และ Data ===
+
     let currentHeaders = [];
     let currentData = [];
     let currentPage = 1;
-    let bestRookieIndex = -1; // เก็บตำแหน่ง Index ของทีมดาว ⭐ ที่ได้อันดับดีที่สุดในตาราง (และไม่มี *)
+    let bestRookieIndex = -1; 
     const rowsPerPage = 15; 
-    const columnsToHide = [1, 3, 6]; // คอลัมน์ที่ซ่อนไว้บนหน้าตารางหลัก (Team ID, Institution, Best Score)
-    // === Event Listeners การทำงาน ===
+    const columnsToHide = [1, 3, 6]; 
+
     categorySelect.addEventListener('change', () => {
         regionSelect.disabled = false;
         if(regionSelect.value) {
@@ -413,21 +412,21 @@
     nextBtn.addEventListener('click', () => changePage(1));
     prevBtnMobile.addEventListener('click', () => changePage(-1));
     nextBtnMobile.addEventListener('click', () => changePage(1));
-    // === ฟังก์ชันหลักในการเรียกข้อมูลหลังบ้าน (Hybrid Mode) ===
+
     function callBackend() {
         const category = categorySelect.value;
         const region = regionSelect.value;
         const regionName = regionSelect.options[regionSelect.selectedIndex].text;
         if (!category || !region) return;
-        // แสดงสถานะ Loading ระหว่างดึงข้อมูล
+
         if (tableBody) tableBody.parentElement.parentElement.classList.add('hidden');
         if (paginationContainer) paginationContainer.classList.add('hidden');
         if (remarkBox) remarkBox.classList.add('hidden');
-        if (tableSubtitle) tableSubtitle.classList.add('hidden');
+        if (tableSubtitle) tableSubtitle.classList.hidden = true;
         if (loading) loading.classList.remove('hidden');
         if (tableTitle) tableTitle.innerText = `${category} - ${regionName}`;
         updateHeaderColor(category);
-        // ตรวจสอบสภาพแวดล้อมเพื่อทำงานแบบ Hybrid
+
         const isGoogleEnv = typeof google !== 'undefined' && google.script && google.script.run;
         if (isGoogleEnv) {
             console.log('⚡ Running on Google Environment: Fetching via google.script.run');
@@ -462,7 +461,7 @@
             }, 600);
         }
     }
-    // === ฟังก์ชันจัดการและจัดระเบียบข้อมูลดิบที่ได้กลับมา ===
+
     function handleResponseData(result) {
         if (loading) loading.classList.add('hidden');
         if (tableBody) tableBody.parentElement.parentElement.classList.remove('hidden');
@@ -472,21 +471,22 @@
             return;
         }
         currentHeaders = result.headers || [];
-        currentData = result.data || []; // ใช้ข้อมูลดิบตามลำดับดั้งเดิมจากหลังบ้านทันที
-        // จับคู่อ้างอิงตำแหน่งคอลัมน์ของคะแนน
+        currentData = result.data || []; 
+
         const r1Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1'));
         const r2Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 2') || (h||'').toString().includes('รอบ 2'));
         const bestIdx = 6; 
-        // ตรวจเช็กสถานะว่าแข่งครบถ้วนทั้ง 2 รอบแล้วหรือยัง
+
         let allTeamsHaveRound2 = false;
         if (r2Idx !== -1 && currentData.length > 0) {
             allTeamsHaveRound2 = currentData.every(row => row[r2Idx] !== null && row[r2Idx].toString().trim() !== "");
         }
-        // ค้นหาตำแหน่งของแชมป์ดาวรุ่ง (ตัวแรกที่มีดาว ⭐ และไม่มีเครื่องหมาย * ในชื่อทีม) เพื่อแจกรางวัล Best Rookie
+
         bestRookieIndex = currentData.findIndex(row => {
             const teamName = (row[2] || '').toString().trim();
             return teamName.includes('⭐') && !teamName.endsWith('*');
         });
+
         updateStatus(allTeamsHaveRound2);
         renderPaginationTable(r1Idx, r2Idx, bestIdx, allTeamsHaveRound2);
         if(currentData.length > 0) {
@@ -494,7 +494,7 @@
             if (tableSubtitle) tableSubtitle.classList.remove('hidden');
         }
     }
-    // === ฟังก์ชันเปลี่ยนสีส่วนหัวตารางให้สอดคล้องกับ Category แบบ Glassmorphism ===
+
     function updateHeaderColor(category) {
         if (!tableHeaders) return;
         tableHeaders.className = "border-b text-base uppercase tracking-wider text-white font-bold transition-colors duration-300";
@@ -508,7 +508,7 @@
             tableHeaders.className = "bg-slate-950/80 border-purple-500/20 text-cyan-300";
         }
     }
-    // === ฟังก์ชันเรนเดอร์ตารางและจัดแบ่งหน้าเพจ (Pagination) ===
+
     function renderPaginationTable(r1Idx, r2Idx, bestIdx, allTeamsHaveRound2) {
         if (!tableHeaders || !tableBody) return;
         tableHeaders.innerHTML = '';
@@ -540,17 +540,18 @@
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = Math.min(startIndex + rowsPerPage, totalRecords);
         const pageData = currentData.slice(startIndex, startIndex + rowsPerPage);
-        // 🧮 คำนวณหา "อันดับการรับรางวัลจริง (Award Rank)" ล่วงหน้าสำหรับข้อมูลตารางรอบนี้
+
         let awardRankCounter = 0;
         const awardRanksMap = currentData.map((row) => {
             const teamName = (row[2] || '').toString().trim();
             if (teamName.endsWith('*')) {
-                return -1; // ไม่มีสิทธิ์ได้รางวัลอันดับ 1-10
+                return -1; 
             } else {
                 awardRankCounter++;
                 return awardRankCounter;
             }
         });
+
         pageData.forEach((row, index) => {
             const realIndex = startIndex + index; 
             const tr = document.createElement('tr');
@@ -568,6 +569,7 @@
                 tr.className += realIndex % 2 === 0 ? 'bg-slate-900/20' : 'bg-slate-900/50';
             }
             tr.addEventListener('click', () => openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2, currentAwardRank));
+            
             const r1Value = r1Idx !== -1 ? parseFloat(row[r1Idx]) : NaN;
             const r2Value = r2Idx !== -1 ? parseFloat(row[r2Idx]) : NaN;
             const bestValue = parseFloat(row[bestIdx]);
@@ -576,6 +578,7 @@
             if (isR1Match && isR2Match) {
                 isR2Match = false; 
             }
+
             row.forEach((cell, cellIndex) => {
                 if (columnsToHide.includes(cellIndex)) return; 
                 const td = document.createElement('td');
@@ -593,6 +596,7 @@
             });
             tableBody.appendChild(tr);
         });
+
         if (paginationContainer) paginationContainer.classList.remove('hidden');
         if (totalRows) totalRows.innerText = totalRecords;
         if (startRange) startRange.innerText = startIndex + 1;
@@ -600,6 +604,7 @@
         if (pageNumberDisplay) pageNumberDisplay.innerText = `หน้า ${currentPage} / ${totalPages}`;
         prevBtn.disabled = prevBtnMobile.disabled = (currentPage === 1);
         nextBtn.disabled = nextBtnMobile.disabled = (currentPage === totalPages);
+
         const toggleBtnStyle = (btn) => {
             if(!btn) return;
             if(btn.disabled) btn.classList.add('opacity-40', 'cursor-not-allowed');
@@ -608,7 +613,7 @@
         toggleBtnStyle(prevBtn); toggleBtnStyle(nextBtn);
         toggleBtnStyle(prevBtnMobile); toggleBtnStyle(nextBtnMobile);
     }
-    // === 🎯 ฟังก์ชันจัดการหน้าต่างรายละเอียดทีม ===
+
     function openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2, currentAwardRank) {
         const medalCert = row[0] !== "" ? row[0] : '-';   
         const teamId = row[1] !== "" ? row[1] : '-';      
@@ -619,6 +624,7 @@
         const bestScore = row[bestIdx] !== "" ? row[bestIdx] : '-';
         const hasRookieStar = teamName.trim().includes('⭐'); 
         const hasNoAwardAsterisk = teamName.trim().endsWith('*'); 
+
         if (document.getElementById('modalTeamId')) document.getElementById('modalTeamId').innerText = `TEAM ID: ${teamId}`;
         if (document.getElementById('modalTeamName')) document.getElementById('modalTeamName').innerText = teamName;
         if (document.getElementById('modalInstitution')) document.getElementById('modalInstitution').innerText = institution;
@@ -626,7 +632,7 @@
         if (document.getElementById('modalRound1Score')) document.getElementById('modalRound1Score').innerText = round1;
         if (document.getElementById('modalRound2Score')) document.getElementById('modalRound2Score').innerText = round2;
         if (document.getElementById('modalBestScore')) document.getElementById('modalBestScore').innerText = bestScore;
-        // ดึง Element บล็อกแสดงความยินดีและชุดรางวัลทั้งหมด
+
         const congratSection = document.getElementById('congratulationsSection');
         const reward1 = document.getElementById('rewardRank1');
         const reward2 = document.getElementById('rewardRank2');
@@ -638,12 +644,11 @@
         const titleGeneralRookie = document.getElementById('titleGeneralRookie');
         const congratsTitle = congratSection ? congratSection.querySelector('h4') : null;
         const rankSubText = document.getElementById('modalTeamRankSub');
-        // 🔄 รีเซ็ตคลาสและซ่อน Element รางวัลเดิมทั้งหมดก่อนเพื่อล้างสถานะเก่า
+
         if (congratSection) {
             congratSection.classList.add('hidden');
             congratSection.classList.remove('flex');
         }
-        // ✨ อัปเดตแก้คำหัวข้อของกล่องตรงนี้ให้เป็น "Congratulation" แบบคงที่
         if (congratsTitle) congratsTitle.innerText = " Congratulation";
         if (reward1) reward1.classList.add('hidden');
         if (reward2) reward2.classList.add('hidden');
@@ -654,13 +659,13 @@
         if (titleBestRookie) titleBestRookie.classList.add('hidden');
         if (titleGeneralRookie) titleGeneralRookie.classList.add('hidden');
         if (document.getElementById('certDynamicRank')) document.getElementById('certDynamicRank').innerText = '-';
+
         let isEligibleForCongrat = false;
-        // 🔍 ตรวจเช็กกระดานหลักว่าทุกๆ ทีมมีคะแนน Round 1 แล้วหรือยังเพื่อระบุความสมบูรณ์ของข้อมูล
         let allTeamsHaveRound1 = false;
         if (r1Idx !== -1 && currentData.length > 0) {
             allTeamsHaveRound1 = currentData.every(r => r[r1Idx] !== null && r[r1Idx].toString().trim() !== "" && r[r1Idx].toString().trim() !== "-");
         }
-        // 🚨 จัดการการแสดงแถบข้อความอันดับด้านบน
+
         if (rankSubText) {
             if (allTeamsHaveRound1 && !hasNoAwardAsterisk) {
                 rankSubText.innerText = `อันดับที่ : ${currentAwardRank}`;
@@ -669,9 +674,8 @@
                 rankSubText.classList.add('hidden'); 
             }
         }
-        // ตรวจสอบว่าทีมที่คลิกเปิดดูนี้ มีคะแนน Round 1 หรือไม่
+
         if (round1 !== '-' && round1 !== '' && round1 !== null) {
-            // 1. 🏅 ลоจิกตรวจสอบรางวัลอันดับมาตรฐาน 1-10
             if (allTeamsHaveRound2 && !hasNoAwardAsterisk && currentAwardRank >= 1 && currentAwardRank <= 10) {
                 isEligibleForCongrat = true;
                 if (currentAwardRank === 1 && reward1) {
@@ -686,7 +690,7 @@
                     reward4To10.classList.remove('hidden');
                 }
             }
-            // 2. 🥉 ลоจิกตรวจสอบรางวัลสำหรับกลุ่มเหรียญรางวัล Gold, Silver, Bronze
+
             const cleanMedal = medalCert.toString().toLowerCase();
             if (cleanMedal.includes('gold') || cleanMedal.includes('silver') || cleanMedal.includes('bronze') || cleanMedal.includes('เหรียญ')) {
                 isEligibleForCongrat = true;
@@ -701,7 +705,7 @@
                     }
                 }
             }
-            // 3. 🎯 ลоจิกตรวจสอบรางวัลพิเศษกลุ่มดาวรุ่ง
+
             if (allTeamsHaveRound2 && hasRookieStar && !hasNoAwardAsterisk) {
                 isEligibleForCongrat = true;
                 if(rewardRookie) {
@@ -713,12 +717,13 @@
                     }
                 }
             }
-            // ยืนยันสิทธิ์เปิดใช้งานกล่องแอนิเมชันแสดงความยินดี
+
             if (isEligibleForCongrat && congratSection) {
                 congratSection.classList.remove('hidden');
                 congratSection.classList.add('flex');
             }
         }
+
         const modal = document.getElementById('teamDetailModal');
         if (modal) {
             modal.classList.remove('hidden');
@@ -726,7 +731,7 @@
             document.body.style.overflow = 'hidden'; 
         }
     }
-    // === ฟังก์ชันสำหรับเปลี่ยนหน้า Pagination ===
+
     function changePage(direction) {
         currentPage += direction;
         const category = categorySelect.value;
@@ -740,7 +745,7 @@
         );
         if(tableTitle) tableTitle.scrollIntoView({ behavior: 'smooth' });
     }
-    // === ฟังก์ชันปิด/เปิด Modal ทั่วไป ===
+
     function closeModal() {
         const modal = document.getElementById('teamDetailModal');
         if(modal) {
@@ -749,6 +754,7 @@
             document.body.style.overflow = ''; 
         }
     }
+
     function openMedalInfoModal() {
         const medalModal = document.getElementById('medalInfoModal');
         if(medalModal) {
@@ -756,6 +762,7 @@
             medalModal.classList.add('flex');
         }
     }
+
     function closeMedalInfoModal() {
         const medalModal = document.getElementById('medalInfoModal');
         if(medalModal) {
@@ -763,6 +770,7 @@
             medalModal.classList.remove('flex');
         }
     }
+
     window.onclick = function(event) {
         const modal = document.getElementById('teamDetailModal');
         const medalModal = document.getElementById('medalInfoModal');
@@ -772,7 +780,7 @@
             closeModal();
         }
     }
-    // === ฟังก์ชันแจ้งสถานะบอร์ดคะแนน (Official / Unofficial) ===
+
     function updateStatus(isOfficial) {
         if(!statusBadge || !statusDot || !statusText) return;
         statusBadge.classList.remove('hidden');
@@ -787,6 +795,7 @@
             statusText.className = 'text-amber-400 font-bold';
         }
     }
+
     function showBackendError() {
         if(loading) loading.classList.add('hidden');
         if(tableBody) {
@@ -795,13 +804,14 @@
         }
         updateStatus(false);
     }
+
     function showError(message) {
         if(tableHeaders) tableHeaders.innerHTML = `<th class="p-4 text-center text-red-400">เกิดข้อผิดพลาด</th>`;
         if(tableBody) tableBody.innerHTML = `<tr><td class="p-8 text-center text-red-400 font-semibold bg-slate-950/20">${message}</td></tr>`;
         if(paginationContainer) paginationContainer.classList.add('hidden');
         if(remarkBox) remarkBox.classList.add('hidden');
     }
-    // === ⏳ ระบบ Auto-Fetch ดึงข้อมูลใหม่มาอัปเดตอัตโนมัติทุกๆ 5 นาที ===
+
     setInterval(function() {
         const category = categorySelect.value;
         const region = regionSelect.value;
@@ -819,7 +829,7 @@
             }, 800); 
         }
     }, 5 * 60 * 1000); 
-    // === ฟังก์ชันสำหรับจำลองข้อมูลแบบ Local Offline (Mock Data) ===
+
     function generateMockData(category, regionName) {
         return {
             headers: ["Medal Certificate", "Team ID", "Team Name", "Institution", "Round 1", "Round 2", "Best Score"],
