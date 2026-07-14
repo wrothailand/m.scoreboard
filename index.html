@@ -6,7 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght=400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         body { 
             font-family: 'Prompt', sans-serif; 
@@ -14,145 +14,149 @@
         .dot-blink { animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
         .clickable-row { cursor: pointer; transition: all 0.2s ease; }
-        .clickable-row:hover { transform: translateY(-1px); background-color: rgba(255, 255, 255, 0.08) !important; }
+        /* เปลี่ยนสี Hover ให้เหมาะกับ Light Theme */
+        .clickable-row:hover { transform: translateY(-1px); background-color: rgba(0, 0, 0, 0.04) !important; }
         .modal-animate { animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes scaleUp { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         
-        /* ปรับสไตล์ Scrollbar สำหรับความล้ำแบบ Cyberpunk */
+        /* ปรับสไตล์ Scrollbar สำหรับ Light Theme */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-        ::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.3); border-radius: 99px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(6, 182, 212, 0.5); }
+        ::-webkit-scrollbar-track { background: rgba(241, 245, 249, 1); } /* slate-100 */
+        ::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 1); border-radius: 99px; } /* slate-300 */
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 1); } /* slate-400 */
     </style>
 </head>
-<body class="text-slate-200 min-h-screen flex flex-col justify-between bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 bg-fixed text-base overflow-x-hidden">
+<!-- เปลี่ยนพื้นหลังเป็น bg-slate-50 -->
+<body class="text-slate-800 min-h-screen flex flex-col justify-between bg-slate-50 bg-fixed text-base overflow-x-hidden">
     
-    <!-- Header: เปลี่ยนเป็น Universal Full-Width Edge-to-Edge Bar -->
-    <header class="relative bg-slate-900/50 backdrop-blur-xl border-b border-cyan-500/30 py-6 px-4 sm:px-6 lg:px-10 shadow-xl w-full flex items-center justify-center min-h-[100px] z-10">
+    <!-- Header: Light Theme -->
+    <header class="relative bg-white/90 backdrop-blur-xl border-b border-slate-200 py-6 px-4 sm:px-6 lg:px-10 shadow-sm w-full flex items-center justify-center min-h-[100px] z-10">
         <div class="absolute left-4 sm:left-6 lg:left-10 flex items-center justify-center">
-            <img src="https://lh3.googleusercontent.com/d/1jly-uEyURhUVCr1epKKDkjtlNRMKhWTq" alt="WRO Logo" class="h-12 sm:h-16 lg:h-20 w-auto object-contain drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]">
+            <!-- คง Logo เดิมไว้ -->
+            <img src="https://lh3.googleusercontent.com/d/1jly-uEyURhUVCr1epKKDkjtlNRMKhWTq" alt="WRO Logo" class="h-12 sm:h-16 lg:h-20 w-auto object-contain drop-shadow-sm">
         </div>
         <div class="text-center">
-            <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-wider bg-gradient-to-r from-cyan-400 via-teal-200 to-indigo-400 bg-clip-text text-transparent drop-shadow-sm">LEADERBOARD</h1>
-            <p class="text-cyan-300 text-xs sm:text-base lg:text-lg mt-1 tracking-wider font-semibold opacity-90">World Robot Olympiad 2026</p>
+            <!-- เปลี่ยนสีตัวอักษร Gradient Header ให้สว่างและเข้มขึ้น -->
+            <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-wider bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent drop-shadow-sm">LEADERBOARD</h1>
+            <p class="text-slate-500 text-xs sm:text-base lg:text-lg mt-1 tracking-wider font-semibold opacity-90">World Robot Olympiad 2026</p>
         </div>
     </header>
-
-    <!-- Main Content: ขยายพื้นที่เต็มเหนี่ยว รองรับทุกหน้าจอขนาดใหญ่ -->
+    
+    <!-- Main Content -->
     <main class="w-full max-w-full px-4 sm:px-6 lg:px-10 py-6 flex-grow flex flex-col justify-start">
         
         <!-- Dropdown Selection -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 w-full">
-            <div class="bg-slate-900/40 backdrop-blur-xl p-4 rounded-2xl border border-cyan-500/30">
-                <label class="block text-xs font-semibold text-cyan-400/80 mb-1 tracking-wider">รุ่นการแข่งขัน (Category)</label>
-                <select id="categorySelect" class="w-full bg-slate-950/60 border border-slate-700/60 rounded-xl p-3 text-lg font-medium text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all cursor-pointer">
-                    <option value="" class="bg-slate-900 text-white" disabled selected>-- เลือกรุ่นการแข่งขัน --</option>
-                    <option value="Elementary" class="bg-slate-900 text-white">Elementary</option>
-                    <option value="Junior" class="bg-slate-900 text-white">Junior</option>
-                    <option value="Senior" class="bg-slate-900 text-white">Senior</option>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <label class="block text-xs font-semibold text-slate-500 mb-1 tracking-wider">รุ่นการแข่งขัน (Category)</label>
+                <select id="categorySelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-lg font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer">
+                    <option value="" class="bg-white text-slate-800" disabled selected>-- เลือกรุ่นการแข่งขัน --</option>
+                    <option value="Elementary" class="bg-white text-slate-800">Elementary</option>
+                    <option value="Junior" class="bg-white text-slate-800">Junior</option>
+                    <option value="Senior" class="bg-white text-slate-800">Senior</option>
                 </select>
             </div>
-            <div class="bg-slate-900/40 backdrop-blur-xl p-4 rounded-2xl border border-cyan-500/30">
-                <label class="block text-xs font-semibold text-cyan-400/80 mb-1 tracking-wider">ภูมิภาค (Region)</label>
-                <select id="regionSelect" class="w-full bg-slate-950/60 border border-slate-700/60 rounded-xl p-3 text-lg font-medium text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" disabled>
-                    <option value="" class="bg-slate-900 text-white" disabled selected>-- เลือกภูมิภาค --</option>
-                    <option value="Southern" class="bg-slate-900 text-white">ภาคใต้</option>
-                    <option value="BKK" class="bg-slate-900 text-white">กรุงเทพมหานคร</option>
-                    <option value="Central" class="bg-slate-900 text-white">ภาคกลาง</option>
-                    <option value="Isan" class="bg-slate-900 text-white">ภาคตะวันออกเฉียงเหนือ</option>
-                    <option value="Northern" class="bg-slate-900 text-white">ภาคเหนือ</option>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <label class="block text-xs font-semibold text-slate-500 mb-1 tracking-wider">ภูมิภาค (Region)</label>
+                <select id="regionSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-lg font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                    <option value="" class="bg-white text-slate-800" disabled selected>-- เลือกภูมิภาค --</option>
+                    <option value="Southern" class="bg-white text-slate-800">ภาคใต้</option>
+                    <option value="BKK" class="bg-white text-slate-800">กรุงเทพมหานคร</option>
+                    <option value="Central" class="bg-white text-slate-800">ภาคกลาง</option>
+                    <option value="Isan" class="bg-white text-slate-800">ภาคตะวันออกเฉียงเหนือ</option>
+                    <option value="Northern" class="bg-white text-slate-800">ภาคเหนือ</option>
                 </select>
             </div>
         </div>
-
+        
         <!-- Title & Status -->
         <div class="flex justify-between items-center mb-4 px-1 w-full">
             <div class="flex flex-col">
-                <h2 id="tableTitle" class="text-xl sm:text-2xl font-bold text-white tracking-wide">กรุณาเลือกข้อมูลด้านบน</h2>
-                <p id="tableSubtitle" class="text-xs sm:text-sm text-cyan-400 font-medium hidden mt-0.5">💡 สามารถคลิกที่แถวของทีม เพื่อดูรายละเอียดแบบเต็มได้</p>
+                <h2 id="tableTitle" class="text-xl sm:text-2xl font-bold text-slate-800 tracking-wide">กรุณาเลือกข้อมูลด้านบน</h2>
+                <p id="tableSubtitle" class="text-xs sm:text-sm text-slate-500 font-medium hidden mt-0.5">💡 สามารถคลิกที่แถวของทีม เพื่อดูรายละเอียดแบบเต็มได้</p>
             </div>
-            <div id="statusBadge" class="hidden items-center bg-slate-900/60 backdrop-blur-md border border-slate-700/80 px-4 py-1.5 rounded-full text-sm font-semibold">
+            <div id="statusBadge" class="hidden items-center bg-white border border-slate-200 shadow-sm px-4 py-1.5 rounded-full text-sm font-semibold">
                 <span id="statusDot" class="w-3 h-3 rounded-full mr-2 dot-blink"></span>
                 <span id="statusText">Unofficial</span>
             </div>
         </div>
-
-        <!-- Leaderboard Table Container: ปรับขยายเต็มความกว้างสไตล์ Dashboard -->
-        <div class="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-purple-500/20 overflow-hidden w-full flex flex-col justify-between flex-grow shadow-2xl">
+        
+        <!-- Leaderboard Table Container -->
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden w-full flex flex-col justify-between flex-grow shadow-md">
             <div class="overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr id="tableHeaders" class="bg-slate-950/80 border-b border-purple-500/20 text-cyan-300 text-base uppercase tracking-wider font-bold transition-colors duration-300">
+                        <tr id="tableHeaders" class="bg-slate-100 border-b border-slate-200 text-slate-700 text-base uppercase tracking-wider font-bold transition-colors duration-300">
                             <th class="p-4 md:p-5 text-center opacity-70">ไม่มีข้อมูลเลือกไว้</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-800 text-base text-slate-300">
+                    <tbody id="tableBody" class="divide-y divide-slate-100 text-base text-slate-700">
                         <tr>
-                            <td class="p-8 text-center text-slate-400 font-medium bg-slate-950/20">โปรดเลือก รุ่น และ ภูมิภาค เพื่อดึงคะแนนล่าสุด</td>
+                            <td class="p-8 text-center text-slate-500 font-medium bg-slate-50">โปรดเลือก รุ่น และ ภูมิภาค เพื่อดึงคะแนนล่าสุด</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             
             <!-- Pagination Container -->
-            <div id="paginationContainer" class="hidden bg-slate-950/40 px-4 py-4 flex items-center justify-between border-t border-slate-800/80 sm:px-6 text-base w-full">
+            <div id="paginationContainer" class="hidden bg-slate-50 px-4 py-4 flex items-center justify-between border-t border-slate-200 sm:px-6 text-base w-full">
                 <div class="flex-1 flex justify-between sm:hidden">
-                    <button id="prevBtnMobile" class="relative inline-flex items-center px-4 py-2 border border-slate-700 font-medium rounded-xl text-slate-300 bg-slate-900/80 hover:bg-slate-800 focus:outline-none">ก่อนหน้า</button>
-                    <button id="nextBtnMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-700 font-medium rounded-xl text-slate-300 bg-slate-900/80 hover:bg-slate-800 focus:outline-none">ถัดไป</button>
+                    <button id="prevBtnMobile" class="relative inline-flex items-center px-4 py-2 border border-slate-300 font-medium rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none shadow-sm">ก่อนหน้า</button>
+                    <button id="nextBtnMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 font-medium rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none shadow-sm">ถัดไป</button>
                 </div>
                 <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                     <div>
-                        <p class="text-sm text-slate-400 font-medium">
-                            แสดงรายการที่ <span id="startRange" class="font-bold text-cyan-400">0</span> ถึง <span id="endRange" class="font-bold text-cyan-400">0</span> จากทั้งหมด <span id="totalRows" class="font-bold text-white">0</span> รายการ
+                        <p class="text-sm text-slate-600 font-medium">
+                            แสดงรายการที่ <span id="startRange" class="font-bold text-indigo-600">0</span> ถึง <span id="endRange" class="font-bold text-indigo-600">0</span> จากทั้งหมด <span id="totalRows" class="font-bold text-slate-900">0</span> รายการ
                         </p>
                     </div>
                     <div>
-                        <nav class="relative z-0 inline-flex rounded-xl -space-x-px" aria-label="Pagination">
-                            <button id="prevBtn" class="relative inline-flex items-center px-4 py-2 rounded-l-xl border border-slate-700 bg-slate-900/80 font-medium text-slate-300 hover:bg-slate-800 focus:outline-none">ก่อนหน้า</button>
-                            <span id="pageNumberDisplay" class="bg-slate-950/60 border-slate-700 text-cyan-300 relative inline-flex items-center px-4 py-2 border font-semibold">หน้า 1</span>
-                            <button id="nextBtn" class="relative inline-flex items-center px-4 py-2 rounded-r-xl border border-slate-700 bg-slate-900/80 font-medium text-slate-300 hover:bg-slate-800 focus:outline-none">ถัดไป</button>
+                        <nav class="relative z-0 inline-flex rounded-xl -space-x-px shadow-sm" aria-label="Pagination">
+                            <button id="prevBtn" class="relative inline-flex items-center px-4 py-2 rounded-l-xl border border-slate-300 bg-white font-medium text-slate-700 hover:bg-slate-50 focus:outline-none">ก่อนหน้า</button>
+                            <span id="pageNumberDisplay" class="bg-slate-50 border-slate-300 text-indigo-700 relative inline-flex items-center px-4 py-2 border font-semibold">หน้า 1</span>
+                            <button id="nextBtn" class="relative inline-flex items-center px-4 py-2 rounded-r-xl border border-slate-300 bg-white font-medium text-slate-700 hover:bg-slate-50 focus:outline-none">ถัดไป</button>
                         </nav>
                     </div>
                 </div>
             </div>
         </div>
-
+        
         <!-- Remarks Section -->
-        <div id="remarkBox" class="hidden mt-4 bg-slate-900/40 backdrop-blur-xl p-5 rounded-2xl border border-purple-500/20 text-sm md:text-base text-slate-300 space-y-2.5 font-medium w-full">
+        <div id="remarkBox" class="hidden mt-4 bg-white p-5 rounded-2xl border border-slate-200 text-sm md:text-base text-slate-600 space-y-2.5 font-medium w-full shadow-sm">
             <div class="flex items-start">
-                <span class="font-bold text-cyan-400 min-w-[130px]">Remark :</span>
-                <span class="text-slate-300">⭐ = Team Rookie</span>
+                <span class="font-bold text-indigo-600 min-w-[130px]">Remark :</span>
+                <span class="text-slate-700">⭐ = Team Rookie</span>
             </div>
             <div class="flex items-start">
-                <span class="font-bold text-cyan-400 min-w-[130px]">Medal Certificate :</span>
-                <div class="text-slate-300 flex flex-col space-y-1.5 w-full">
+                <span class="font-bold text-indigo-600 min-w-[130px]">Medal Certificate :</span>
+                <div class="text-slate-700 flex flex-col space-y-1.5 w-full">
                     <span class="flex flex-wrap gap-2"><span>🏅 Gold</span> / <span>🥈 Silver</span> / <span>🥉 Bronze</span></span>
-                    <span class="text-xs md:text-sm text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-1.5 font-semibold flex items-center w-full">
-                        <svg class="w-4 h-4 mr-1.5 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <span class="text-xs md:text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 font-semibold flex items-center w-full">
+                        <svg class="w-4 h-4 mr-1.5 flex-shrink-0 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         อันดับคะแนนจะจัดหลังจากคณะกรรมการตรวจสอบความถูกต้องเรียบร้อยแล้ว
                     </span>
                 </div>
             </div>
         </div>
-
+        
         <!-- Loading Component -->
         <div id="loading" class="hidden text-center py-12 w-full">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-cyan-400 border-t-transparent mb-3"></div>
-            <p class="text-base text-slate-400 font-medium">กำลังดึงข้อมูลสดจากระบบ...</p>
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-500 border-t-transparent mb-3"></div>
+            <p class="text-base text-slate-600 font-medium">กำลังดึงข้อมูลสดจากระบบ...</p>
         </div>
     </main>
-
+    
     <!-- Team Detail Modal -->
-    <div id="teamDetailModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden items-center justify-center p-4 transition-all duration-300">
-        <div class="bg-slate-900/90 backdrop-blur-xl w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-animate border border-cyan-500/30 max-h-[92vh] flex flex-col text-slate-200">
-            <div id="normalModalHeader" class="bg-slate-950/60 px-5 py-4 md:px-6 md:py-5 flex-shrink-0 border-b border-slate-800">
+    <div id="teamDetailModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-animate border border-slate-200 max-h-[92vh] flex flex-col text-slate-700">
+            <div id="normalModalHeader" class="bg-slate-50 px-5 py-4 md:px-6 md:py-5 flex-shrink-0 border-b border-slate-200">
                 <div class="flex justify-between items-start gap-4">
                     <div class="min-w-0 flex-1">
-                        <span id="modalTeamId" class="inline-block bg-cyan-600/30 border border-cyan-400 text-cyan-300 text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">TEAM ID: -</span>
-                        <h3 id="modalTeamName" class="text-lg md:text-xl font-bold mt-1.5 tracking-wide text-white truncate">Team Name</h3>
-                        <div id="modalTeamRankSub" class="text-amber-400 text-sm md:text-base font-bold mt-1 tracking-wide">อันดับที่ : -</div>
+                        <span id="modalTeamId" class="inline-block bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">TEAM ID: -</span>
+                        <h3 id="modalTeamName" class="text-lg md:text-xl font-bold mt-1.5 tracking-wide text-slate-900 truncate">Team Name</h3>
+                        <div id="modalTeamRankSub" class="text-amber-600 text-sm md:text-base font-bold mt-1 tracking-wide">อันดับที่ : -</div>
                     </div>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-white bg-slate-800/80 p-2 rounded-full transition-colors focus:outline-none flex-shrink-0">
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 bg-slate-100 p-2 rounded-full transition-colors focus:outline-none flex-shrink-0">
                         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -160,18 +164,19 @@
                 </div>
             </div>
             <div class="overflow-y-auto flex-1 p-5 md:p-6 space-y-5">
+                
                 <!-- Rewards / Congratulation Section -->
-                <div id="congratulationsSection" class="hidden flex-col p-4 bg-gradient-to-r from-amber-500/10 to-amber-600/5 rounded-2xl border-l-4 border-amber-500 shadow-sm text-slate-200">
+                <div id="congratulationsSection" class="hidden flex-col p-4 bg-gradient-to-r from-amber-50 to-yellow-50/50 rounded-2xl border-l-4 border-amber-500 shadow-sm text-slate-800">
                     <div class="flex items-center gap-2 mb-2">
                         <span class="text-xl md:text-2xl animate-bounce">🎉</span>
-                        <h4 class="text-base md:text-lg font-black text-amber-400 tracking-wide uppercase">Congratulation</h4>
+                        <h4 class="text-base md:text-lg font-black text-amber-600 tracking-wide uppercase">Congratulation</h4>
                     </div>
                     <div class="w-full text-xs md:text-sm font-medium space-y-3">
-                        <div id="rewardRank1" class="hidden flex-col gap-1 text-slate-300">
-                            <div class="font-bold text-amber-300 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
+                        <div id="rewardRank1" class="hidden flex-col gap-1 text-slate-700">
+                            <div class="font-bold text-amber-600 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
                                 <span>🏆</span> ทีมของท่านติด 1 ใน 3 ที่ได้ขึ้นรับรางวัล
                             </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
+                            <ul class="list-none pl-6 space-y-0.5 text-slate-600 text-xs md:text-sm">
                                 <li>- โล่รางวัลชนะเลิศอันดับ 1</li>
                                 <li>- โล่รางวัลชนะเลิศ</li>
                                 <li>- เหรียญทอง WRO 2026</li>
@@ -181,11 +186,11 @@
                                 <li>- สิทธิในการเข้าร่วมการแข่งขัน WRO 2026 รอบชิงแชมป์ประเทศไทย</li>
                             </ul>
                         </div>
-                        <div id="rewardRank2" class="hidden flex-col gap-1 text-slate-300">
-                            <div class="font-bold text-amber-300 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
+                        <div id="rewardRank2" class="hidden flex-col gap-1 text-slate-700">
+                            <div class="font-bold text-amber-600 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
                                 <span>🏆</span> ทีมของท่านติด 1 ใน 3 ที่ได้ขึ้นรับรางวัล
                             </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
+                            <ul class="list-none pl-6 space-y-0.5 text-slate-600 text-xs md:text-sm">
                                 <li>- โล่รางวัลชนะเลิศอันดับ 2</li>
                                 <li>- โล่รางวัลรองชนะเลิศอันดับ 1</li>
                                 <li>- เหรียญเงิน WRO 2026</li>
@@ -195,11 +200,11 @@
                                 <li>- สิทธิในการเข้าร่วมการแข่งขัน WRO 2026 รอบชิงแชมป์ประเทศไทย</li>
                             </ul>
                         </div>
-                        <div id="rewardRank3" class="hidden flex-col gap-1 text-slate-300">
-                            <div class="font-bold text-amber-300 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
+                        <div id="rewardRank3" class="hidden flex-col gap-1 text-slate-700">
+                            <div class="font-bold text-amber-600 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
                                 <span>🏆</span> ทีมของท่านติด 1 ใน 3 ที่ได้ขึ้นรับรางวัล
                             </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
+                            <ul class="list-none pl-6 space-y-0.5 text-slate-600 text-xs md:text-sm">
                                 <li>- โล่รางวัลชนะเลิศอันดับ 3</li>
                                 <li>- โล่รางวัลรองชนะเลิศอันดับ 2</li>
                                 <li>- เหรียญทองแดง WRO 2026</li>
@@ -209,163 +214,167 @@
                                 <li>- สิทธิในการเข้าร่วมการแข่งขัน WRO 2026 รอบชิงแชมป์ประเทศไทย</li>
                             </ul>
                         </div>
-                        <div id="rewardRank4To10" class="hidden flex-col gap-1 text-slate-300">
-                            <div class="font-bold text-amber-400 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
+                        <div id="rewardRank4To10" class="hidden flex-col gap-1 text-slate-700">
+                            <div class="font-bold text-amber-600 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
                                 <span>🎖️</span> ทีมของท่านติด 1 ใน 10 ที่ได้ขึ้นรับรางวัล
                             </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
+                            <ul class="list-none pl-6 space-y-0.5 text-slate-600 text-xs md:text-sm">
                                 <li>- เหรียญรางวัลชมเชย WRO 2026</li>
-                                <li>- ประกาศนียบัตรรางวัลอันดับ <span id="certDynamicRank" class="font-bold text-white">-</span> (Digital)</li>
+                                <li>- ประกาศนียบัตรรางวัลอันดับ <span id="certDynamicRank" class="font-bold text-slate-900">-</span> (Digital)</li>
                             </ul>
                         </div>
-                        <div id="rewardMedalBadge" class="hidden flex-col gap-1 text-slate-300 pt-1 border-t border-slate-800">
-                            <div class="font-bold text-cyan-300 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
+                        <div id="rewardMedalBadge" class="hidden flex-col gap-1 text-slate-700 pt-1 border-t border-amber-200/50">
+                            <div class="font-bold text-indigo-600 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
                                 <span id="medalRewardIcon">🏅</span> รางวัลประเภทเกียรติบัตรเหรียญรางวัล
                             </div>
-                            <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
+                            <ul class="list-none pl-6 space-y-0.5 text-slate-600 text-xs md:text-sm">
                                 <li>- ป้ายประกาศเกียรติคุณ</li>
                             </ul>
                         </div>
-                        <div id="rewardRookie" class="hidden flex-col gap-1 text-slate-300 pt-1 border-t border-slate-800">
+                        <div id="rewardRookie" class="hidden flex-col gap-1 text-slate-700 pt-1 border-t border-amber-200/50">
                             <div id="titleBestRookie" class="hidden flex-col gap-0.5">
-                                <div class="font-bold text-emerald-400 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
+                                <div class="font-bold text-emerald-600 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
                                     <span>⭐</span> คุณได้รับรางวัล The Best of Rookie Team
                                 </div>
-                                <ul class="list-none pl-6 space-y-0.5 text-slate-400 text-xs md:text-sm">
+                                <ul class="list-none pl-6 space-y-0.5 text-slate-600 text-xs md:text-sm">
                                     <li>- ถ้วยรางวัล Rookie Team Award</li>
                                     <li>- ประกาศนียบัตร Rookie Team (Digital)</li>
                                 </ul>
                             </div>
                             <div id="titleGeneralRookie" class="hidden flex-col gap-0.5">
-                                <div class="font-bold text-teal-400 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
+                                <div class="font-bold text-teal-600 flex items-center gap-1.5 text-xs md:text-sm mb-0.5">
                                     <span>✨</span> คุณได้รับประกาศนียบัตร Rookie Team (Digital)
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                
                 <!-- Info Grid -->
                 <div class="space-y-3">
-                    <div class="flex items-start bg-slate-950/40 p-3.5 rounded-2xl border border-slate-800">
-                        <div class="bg-cyan-500/10 p-2 rounded-xl text-cyan-400 mr-3 mt-0.5 flex-shrink-0">
+                    <div class="flex items-start bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                        <div class="bg-indigo-100 p-2 rounded-xl text-indigo-600 mr-3 mt-0.5 flex-shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0V11m0 0H9m11-4a2 2 0 11-4 0 2 2 0 014 0zM7 7h.01M7 11h.01M7 15h.01M13 7h.01M13 11h.01m0 10V11m0 0h1.5m6.5 0h-1.5"></path>
                             </svg>
                         </div>
                         <div class="min-w-0 flex-1">
-                            <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider">Institution / School</p>
-                            <p id="modalInstitution" class="text-sm md:text-base font-semibold text-white mt-0.5 break-words">-</p>
+                            <p class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider">Institution / School</p>
+                            <p id="modalInstitution" class="text-sm md:text-base font-semibold text-slate-900 mt-0.5 break-words">-</p>
                         </div>
                     </div>
-                    <div onclick="openMedalInfoModal()" class="flex items-start bg-amber-500/5 hover:bg-amber-500/10 p-3.5 rounded-2xl border border-amber-500/20 cursor-pointer group transition-all active:scale-[0.99]">
-                        <div class="bg-amber-500/10 p-2 rounded-xl text-amber-400 mr-3 mt-0.5 group-hover:scale-105 transition-transform flex-shrink-0">
+                    <div onclick="openMedalInfoModal()" class="flex items-start bg-amber-50 hover:bg-amber-100/50 p-3.5 rounded-2xl border border-amber-200 cursor-pointer group transition-all active:scale-[0.99]">
+                        <div class="bg-amber-100 p-2 rounded-xl text-amber-600 mr-3 mt-0.5 group-hover:scale-105 transition-transform flex-shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138z"></path>
                             </svg>
                         </div>
                         <div class="min-w-0 flex-1">
-                            <p class="text-[10px] md:text-xs font-bold text-amber-400/80 uppercase tracking-wider flex items-center justify-between gap-2">
+                            <p class="text-[10px] md:text-xs font-bold text-amber-700/80 uppercase tracking-wider flex items-center justify-between gap-2">
                                 <span>Medal Certificate (File Digital)</span> 
-                                <span class="inline-block text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded-md font-bold flex-shrink-0">คลิกดูเกณฑ์</span>
+                                <span class="inline-block text-[9px] bg-amber-200/50 text-amber-800 px-1.5 py-0.5 rounded-md font-bold flex-shrink-0">คลิกดูเกณฑ์</span>
                             </p>
-                            <p id="modalMedal" class="text-sm md:text-base font-bold text-white mt-0.5 flex items-center justify-between gap-2">
+                            <p id="modalMedal" class="text-sm md:text-base font-bold text-slate-900 mt-0.5 flex items-center justify-between gap-2">
                                 <span class="truncate">-</span>
-                                <svg class="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </p>
                         </div>
                     </div>
                 </div>
+                
                 <!-- Scores Overview -->
                 <div>
-                    <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Performance Overview</p>
+                    <p class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-1">Performance Overview</p>
                     <div class="grid grid-cols-3 gap-2.5 md:gap-3">
-                        <div class="bg-slate-950/40 rounded-2xl p-2.5 md:p-3 text-center border border-slate-800">
-                            <span class="text-[10px] md:text-xs font-semibold text-slate-400 block mb-0.5">Round 1</span>
-                            <span id="modalRound1Score" class="text-base md:text-xl font-bold text-slate-200">-</span>
+                        <div class="bg-white rounded-2xl p-2.5 md:p-3 text-center border border-slate-200 shadow-sm">
+                            <span class="text-[10px] md:text-xs font-semibold text-slate-500 block mb-0.5">Round 1</span>
+                            <span id="modalRound1Score" class="text-base md:text-xl font-bold text-slate-800">-</span>
                         </div>
-                        <div class="bg-slate-950/40 rounded-2xl p-2.5 md:p-3 text-center border border-slate-800">
-                            <span class="text-[10px] md:text-xs font-semibold text-slate-400 block mb-0.5">Round 2</span>
-                            <span id="modalRound2Score" class="text-base md:text-xl font-bold text-slate-200">-</span>
+                        <div class="bg-white rounded-2xl p-2.5 md:p-3 text-center border border-slate-200 shadow-sm">
+                            <span class="text-[10px] md:text-xs font-semibold text-slate-500 block mb-0.5">Round 2</span>
+                            <span id="modalRound2Score" class="text-base md:text-xl font-bold text-slate-800">-</span>
                         </div>
-                        <div class="bg-emerald-500/10 rounded-2xl p-2.5 md:p-3 text-center border border-emerald-500/20 ring-1 ring-emerald-500/10">
-                            <span class="text-[10px] md:text-xs font-bold text-emerald-400 block mb-0.5">Best Score</span>
-                            <span id="modalBestScore" class="text-base md:text-xl font-extrabold text-emerald-400">-</span>
+                        <div class="bg-emerald-50 rounded-2xl p-2.5 md:p-3 text-center border border-emerald-200 ring-1 ring-emerald-100">
+                            <span class="text-[10px] md:text-xs font-bold text-emerald-600 block mb-0.5">Best Score</span>
+                            <span id="modalBestScore" class="text-base md:text-xl font-extrabold text-emerald-600">-</span>
                         </div>
                     </div>
                 </div>
                 <div class="pt-1">
-                    <p class="text-xs text-amber-300 bg-amber-500/10 rounded-xl px-3.5 py-2.5 font-semibold border border-amber-500/20 text-center leading-relaxed">
+                    <p class="text-xs text-amber-700 bg-amber-50 rounded-xl px-3.5 py-2.5 font-semibold border border-amber-200 text-center leading-relaxed">
                         ⚠️ อันดับคะแนนจะจัดหลังจากคณะกรรมการตรวจสอบความถูกต้องเรียบร้อยแล้ว
                     </p>
                 </div>
             </div>
-            <div class="bg-slate-950/40 px-5 py-3.5 md:px-6 md:py-4 flex justify-end items-center border-t border-slate-800 flex-shrink-0">
-                <button onclick="closeModal()" class="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl transition-colors text-sm focus:outline-none">
+            <div class="bg-slate-50 px-5 py-3.5 md:px-6 md:py-4 flex justify-end items-center border-t border-slate-200 flex-shrink-0">
+                <button onclick="closeModal()" class="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-xl transition-colors text-sm focus:outline-none shadow-sm">
                     ปิดหน้าต่าง
                 </button>
             </div>
         </div>
     </div>
-
+    
     <!-- Medal Criteria Info Modal -->
-    <div id="medalInfoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[70] hidden items-center justify-center p-4 transition-all duration-300">
-        <div class="bg-slate-900/90 backdrop-blur-xl w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-animate border border-cyan-500/30 text-slate-200">
-            <div class="bg-slate-950/60 px-5 py-4 flex justify-between items-center border-b border-slate-800">
-                <h4 class="text-base font-bold flex items-center gap-2 text-white">
-                    🏆 เกณฑ์การจัดระดับเหรียญรางวัลรางวัล
+    <div id="medalInfoModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[70] hidden items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-animate border border-slate-200 text-slate-800">
+            <div class="bg-slate-50 px-5 py-4 flex justify-between items-center border-b border-slate-200">
+                <h4 class="text-base font-bold flex items-center gap-2 text-slate-900">
+                    🏆 เกณฑ์การจัดระดับเหรียญรางวัล
                 </h4>
-                <button onclick="closeMedalInfoModal()" class="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-full transition-colors">
+                <button onclick="closeMedalInfoModal()" class="text-slate-400 hover:text-slate-600 bg-slate-100 p-1.5 rounded-full transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <div class="p-6 space-y-4">
-                <div class="flex items-start gap-4 p-3.5 bg-amber-500/5 rounded-2xl border border-amber-500/20">
+                <div class="flex items-start gap-4 p-3.5 bg-amber-50 rounded-2xl border border-amber-200">
                     <div class="text-3xl select-none mt-1">🏅</div>
                     <div>
-                        <h5 class="font-bold text-amber-400 text-base">Gold Certificate</h5>
-                        <p class="text-sm font-medium text-slate-300 mt-0.5 leading-relaxed">
-                            รอบคะแนนดีที่สุดเฉลี่ย <span class="font-bold text-amber-400">มากกว่า 75%</span> จากคะแนนเต็ม ในรุ่นที่แข่งขัน
+                        <h5 class="font-bold text-amber-600 text-base">Gold Certificate</h5>
+                        <p class="text-sm font-medium text-slate-600 mt-0.5 leading-relaxed">
+                            รอบคะแนนดีที่สุดเฉลี่ย <span class="font-bold text-amber-600">มากกว่า 75%</span> จากคะแนนเต็ม ในรุ่นที่แข่งขัน
                         </p>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 p-3.5 bg-slate-500/5 rounded-2xl border border-slate-700/40">
+                <div class="flex items-start gap-4 p-3.5 bg-slate-100 rounded-2xl border border-slate-300">
                     <div class="text-3xl select-none mt-1">🥈</div>
                     <div>
-                        <h5 class="font-bold text-slate-300 text-base">Silver Certificate</h5>
-                        <p class="text-sm font-medium text-slate-300 mt-0.5 leading-relaxed">
-                            รอบคะแนนดีที่สุดเฉลี่ย <span class="font-bold text-slate-400">มากกว่า 50%</span> จากคะแนนเต็ม ในรุ่นที่แข่งขัน
+                        <h5 class="font-bold text-slate-700 text-base">Silver Certificate</h5>
+                        <p class="text-sm font-medium text-slate-600 mt-0.5 leading-relaxed">
+                            รอบคะแนนดีที่สุดเฉลี่ย <span class="font-bold text-slate-700">มากกว่า 50%</span> จากคะแนนเต็ม ในรุ่นที่แข่งขัน
                         </p>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 p-3.5 bg-orange-500/5 rounded-2xl border border-orange-500/20">
+                <div class="flex items-start gap-4 p-3.5 bg-orange-50 rounded-2xl border border-orange-200">
                     <div class="text-3xl select-none mt-1">🥉</div>
                     <div>
-                        <h5 class="font-bold text-orange-400 text-base">Bronze Certificate</h5>
-                        <p class="text-sm font-medium text-slate-300 mt-0.5 leading-relaxed">
-                            รอบคะแนนดีที่สุดเฉลี่ย <span class="font-bold text-orange-400">มากกว่า 25%</span> จากคะแนนเต็ม ในรุ่นที่แข่งขัน
+                        <h5 class="font-bold text-orange-600 text-base">Bronze Certificate</h5>
+                        <p class="text-sm font-medium text-slate-600 mt-0.5 leading-relaxed">
+                            รอบคะแนนดีที่สุดเฉลี่ย <span class="font-bold text-orange-600">มากกว่า 25%</span> จากคะแนนเต็ม ในรุ่นที่แข่งขัน
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="bg-slate-950/40 px-5 py-3.5 flex justify-end border-t border-slate-800">
-                <button onclick="closeMedalInfoModal()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-xl transition-colors">
+            <div class="bg-slate-50 px-5 py-3.5 flex justify-end border-t border-slate-200">
+                <button onclick="closeMedalInfoModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm">
                     เข้าใจแล้ว
                 </button>
             </div>
         </div>
     </div>
-
-    <!-- Footer: เปลี่ยนเป็น Full-Width Edge-to-Edge Bar -->
-    <footer class="bg-slate-900/50 backdrop-blur-xl text-slate-400 text-center py-4 text-sm font-medium border-t border-cyan-500/20 tracking-wider shadow-inner w-full mt-auto">
+    
+    <!-- Footer -->
+    <footer class="bg-white/80 backdrop-blur-xl text-slate-500 text-center py-4 text-sm font-medium border-t border-slate-200 tracking-wider w-full mt-auto">
         World Robot Olympiad 2026
     </footer>
     
-    <div class="fixed bottom-2 right-4 text-cyan-400 font-bold bg-slate-950/80 border border-cyan-500/30 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs md:text-sm shadow-sm z-50 pointer-events-none select-none font-mono tracking-wide">
+    <div class="fixed bottom-2 right-4 text-indigo-600 font-bold bg-white/90 border border-slate-200 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs md:text-sm shadow-sm z-50 pointer-events-none select-none font-mono tracking-wide">
         v3.4.18
     </div>
 </body>
+
+<!-- Javascript (คงฟังก์ชันเดิม 100%) -->
 <script>
     const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbye2Ei6OXOzyoYh9gr7vdB6yLmFTzvtp57U0NndD9S1vATSf3xdApVFSzn_6M6AYaU/exec"; 
     
@@ -389,14 +398,14 @@
     const startRange = document.getElementById('startRange');
     const textEndRange = document.getElementById('endRange');
     const totalRows = document.getElementById('totalRows');
-
+    
     let currentHeaders = [];
     let currentData = [];
     let currentPage = 1;
     let bestRookieIndex = -1; 
     const rowsPerPage = 15; 
     const columnsToHide = [1, 3, 4, 5]; 
-
+    
     categorySelect.addEventListener('change', () => {
         regionSelect.disabled = false;
         if(regionSelect.value) {
@@ -404,30 +413,36 @@
             callBackend();
         }
     });
+    
     regionSelect.addEventListener('change', () => {
         currentPage = 1;
         callBackend();
     });
+    
     prevBtn.addEventListener('click', () => changePage(-1));
     nextBtn.addEventListener('click', () => changePage(1));
     prevBtnMobile.addEventListener('click', () => changePage(-1));
     nextBtnMobile.addEventListener('click', () => changePage(1));
-
+    
     function callBackend() {
         const category = categorySelect.value;
         const region = regionSelect.value;
         const regionName = regionSelect.options[regionSelect.selectedIndex].text;
+        
         if (!category || !region) return;
-
+        
         if (tableBody) tableBody.parentElement.parentElement.classList.add('hidden');
         if (paginationContainer) paginationContainer.classList.add('hidden');
         if (remarkBox) remarkBox.classList.add('hidden');
         if (tableSubtitle) tableSubtitle.classList.hidden = true;
         if (loading) loading.classList.remove('hidden');
+        
         if (tableTitle) tableTitle.innerText = `${category} - ${regionName}`;
+        
         updateHeaderColor(category);
-
+        
         const isGoogleEnv = typeof google !== 'undefined' && google.script && google.script.run;
+        
         if (isGoogleEnv) {
             console.log('⚡ Running on Google Environment: Fetching via google.script.run');
             google.script.run
@@ -461,64 +476,70 @@
             }, 600);
         }
     }
-
+    
     function handleResponseData(result) {
         if (loading) loading.classList.add('hidden');
         if (tableBody) tableBody.parentElement.parentElement.classList.remove('hidden');
+        
         if (result.error) {
             showError(result.error);
             updateStatus(false);
             return;
         }
+        
         currentHeaders = result.headers || [];
         currentData = result.data || []; 
-
+        
         const r1Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1'));
         const r2Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 2') || (h||'').toString().includes('รอบ 2'));
         const bestIdx = 6; 
-
+        
         let allTeamsHaveRound2 = false;
         if (r2Idx !== -1 && currentData.length > 0) {
             allTeamsHaveRound2 = currentData.every(row => row[r2Idx] !== null && row[r2Idx].toString().trim() !== "");
         }
-
+        
         bestRookieIndex = currentData.findIndex(row => {
             const teamName = (row[2] || '').toString().trim();
             return teamName.includes('⭐') && !teamName.endsWith('*');
         });
-
+        
         updateStatus(allTeamsHaveRound2);
         renderPaginationTable(r1Idx, r2Idx, bestIdx, allTeamsHaveRound2);
+        
         if(currentData.length > 0) {
             if (remarkBox) remarkBox.classList.remove('hidden');
             if (tableSubtitle) tableSubtitle.classList.remove('hidden');
         }
     }
-
+    
     function updateHeaderColor(category) {
         if (!tableHeaders) return;
-        tableHeaders.className = "border-b text-base uppercase tracking-wider text-white font-bold transition-colors duration-300";
+        // เปลี่ยนสีหัวตารางแบบไดนามิกให้สอดคล้องกับ Light Theme
+        tableHeaders.className = "border-b text-base uppercase tracking-wider text-slate-700 font-bold transition-colors duration-300";
         if (category === 'Elementary') {
-            tableHeaders.classList.add('bg-emerald-950/80', 'border-emerald-500/30', 'text-emerald-300');
+            tableHeaders.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
         } else if (category === 'Junior') {
-            tableHeaders.classList.add('bg-rose-950/80', 'border-rose-500/30', 'text-rose-300');
+            tableHeaders.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
         } else if (category === 'Senior') {
-            tableHeaders.classList.add('bg-blue-950/80', 'border-blue-500/30', 'text-blue-300');
+            tableHeaders.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-800');
         } else {
-            tableHeaders.className = "bg-slate-950/80 border-purple-500/20 text-cyan-300";
+            tableHeaders.className = "bg-slate-100 border-slate-200 text-slate-700";
         }
     }
-
+    
     function renderPaginationTable(r1Idx, r2Idx, bestIdx, allTeamsHaveRound2) {
         if (!tableHeaders || !tableBody) return;
+        
         tableHeaders.innerHTML = '';
         if(!currentHeaders || currentHeaders.length === 0) {
             tableHeaders.innerHTML = '<th class="p-4 text-center">ไม่พบหัวตาราง</th>';
-            tableBody.innerHTML = '<tr><td class="p-8 text-center text-slate-400 font-medium bg-slate-950/20">ไม่มีข้อมูลในแผ่นงานนี้</td></tr>';
+            tableBody.innerHTML = '<tr><td class="p-8 text-center text-slate-500 font-medium bg-slate-50">ไม่มีข้อมูลในแผ่นงานนี้</td></tr>';
             if (paginationContainer) paginationContainer.classList.add('hidden');
             if (remarkBox) remarkBox.classList.add('hidden');
             return;
         }
+        
         currentHeaders.forEach((header, index) => {
             if (columnsToHide.includes(index)) return; 
             const th = document.createElement('th');
@@ -526,21 +547,25 @@
             th.innerText = header || '-';
             tableHeaders.appendChild(th);
         });
+        
         tableBody.innerHTML = '';
         if (!currentData || currentData.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="${currentHeaders.length - columnsToHide.length}" class="p-8 text-center text-slate-400 font-medium bg-slate-950/20">ยังไม่มีข้อมูลการแข่งขันในรุ่นนี้</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="${currentHeaders.length - columnsToHide.length}" class="p-8 text-center text-slate-500 font-medium bg-slate-50">ยังไม่มีข้อมูลการแข่งขันในรุ่นนี้</td></tr>`;
             if (paginationContainer) paginationContainer.classList.add('hidden');
             if (remarkBox) remarkBox.classList.add('hidden');
             return;
         }
+        
         const totalRecords = currentData.length;
         const totalPages = Math.ceil(totalRecords / rowsPerPage);
+        
         if (currentPage < 1) currentPage = 1;
         if (currentPage > totalPages) currentPage = totalPages;
+        
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = Math.min(startIndex + rowsPerPage, totalRecords);
         const pageData = currentData.slice(startIndex, startIndex + rowsPerPage);
-
+        
         let awardRankCounter = 0;
         const awardRanksMap = currentData.map((row) => {
             const teamName = (row[2] || '').toString().trim();
@@ -551,60 +576,71 @@
                 return awardRankCounter;
             }
         });
-
+        
         pageData.forEach((row, index) => {
             const realIndex = startIndex + index; 
             const tr = document.createElement('tr');
             const currentAwardRank = awardRanksMap[realIndex];
-            tr.className = 'clickable-row border-b border-slate-800/60 ';
+            
+            // เปลี่ยนสีพื้นหลังในแต่ละแถวสำหรับ Light Theme
+            tr.className = 'clickable-row border-b border-slate-200 ';
             if (allTeamsHaveRound2) {
                 if (currentAwardRank >= 1 && currentAwardRank <= 3) {
-                    tr.className += 'bg-amber-500/10 text-amber-200'; 
+                    tr.className += 'bg-amber-50/80 text-amber-900'; 
                 } else if (currentAwardRank >= 4 && currentAwardRank <= 10) {
-                    tr.className += 'bg-cyan-500/10 text-cyan-200'; 
+                    tr.className += 'bg-blue-50/80 text-blue-900'; 
                 } else {
-                    tr.className += realIndex % 2 === 0 ? 'bg-slate-900/20' : 'bg-slate-900/50'; 
+                    tr.className += realIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50'; 
                 }
             } else {
-                tr.className += realIndex % 2 === 0 ? 'bg-slate-900/20' : 'bg-slate-900/50';
+                tr.className += realIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50';
             }
+            
             tr.addEventListener('click', () => openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2, currentAwardRank));
             
             const r1Value = r1Idx !== -1 ? parseFloat(row[r1Idx]) : NaN;
             const r2Value = r2Idx !== -1 ? parseFloat(row[r2Idx]) : NaN;
             const bestValue = parseFloat(row[bestIdx]);
+            
             let isR1Match = (!isNaN(r1Value) && !isNaN(bestValue) && r1Value === bestValue);
             let isR2Match = (!isNaN(r2Value) && !isNaN(bestValue) && r2Value === bestValue);
+            
             if (isR1Match && isR2Match) {
                 isR2Match = false; 
             }
-
+            
             row.forEach((cell, cellIndex) => {
                 if (columnsToHide.includes(cellIndex)) return; 
+                
                 const td = document.createElement('td');
                 td.className = 'p-4 font-medium'; 
                 td.innerText = cell !== "" ? cell : '-';
+                
                 if (cellIndex === 2) { 
-                    td.className = 'p-4 font-bold text-white';
+                    td.className = 'p-4 font-bold text-slate-900';
                 }
+                
+                // ไฮไลต์ Best Score สำหรับ Light Theme
                 if (cellIndex === r1Idx && isR1Match) {
-                    td.className = 'p-4 bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 rounded-xl';
+                    td.className = 'p-4 bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 rounded-xl';
                 } else if (cellIndex === r2Idx && isR2Match) {
-                    td.className = 'p-4 bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 rounded-xl';
+                    td.className = 'p-4 bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 rounded-xl';
                 }
+                
                 tr.appendChild(td);
             });
             tableBody.appendChild(tr);
         });
-
+        
         if (paginationContainer) paginationContainer.classList.remove('hidden');
         if (totalRows) totalRows.innerText = totalRecords;
         if (startRange) startRange.innerText = startIndex + 1;
         if (textEndRange) textEndRange.innerText = endIndex;
         if (pageNumberDisplay) pageNumberDisplay.innerText = `หน้า ${currentPage} / ${totalPages}`;
+        
         prevBtn.disabled = prevBtnMobile.disabled = (currentPage === 1);
         nextBtn.disabled = nextBtnMobile.disabled = (currentPage === totalPages);
-
+        
         const toggleBtnStyle = (btn) => {
             if(!btn) return;
             if(btn.disabled) btn.classList.add('opacity-40', 'cursor-not-allowed');
@@ -613,7 +649,7 @@
         toggleBtnStyle(prevBtn); toggleBtnStyle(nextBtn);
         toggleBtnStyle(prevBtnMobile); toggleBtnStyle(nextBtnMobile);
     }
-
+    
     function openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2, currentAwardRank) {
         const medalCert = row[0] !== "" ? row[0] : '-';   
         const teamId = row[1] !== "" ? row[1] : '-';      
@@ -622,9 +658,10 @@
         const round1 = (r1Idx !== -1 && row[r1Idx] !== "") ? row[r1Idx] : '-';
         const round2 = (r2Idx !== -1 && row[r2Idx] !== "") ? row[r2Idx] : '-';
         const bestScore = row[bestIdx] !== "" ? row[bestIdx] : '-';
+        
         const hasRookieStar = teamName.trim().includes('⭐'); 
         const hasNoAwardAsterisk = teamName.trim().endsWith('*'); 
-
+        
         if (document.getElementById('modalTeamId')) document.getElementById('modalTeamId').innerText = `TEAM ID: ${teamId}`;
         if (document.getElementById('modalTeamName')) document.getElementById('modalTeamName').innerText = teamName;
         if (document.getElementById('modalInstitution')) document.getElementById('modalInstitution').innerText = institution;
@@ -632,7 +669,7 @@
         if (document.getElementById('modalRound1Score')) document.getElementById('modalRound1Score').innerText = round1;
         if (document.getElementById('modalRound2Score')) document.getElementById('modalRound2Score').innerText = round2;
         if (document.getElementById('modalBestScore')) document.getElementById('modalBestScore').innerText = bestScore;
-
+        
         const congratSection = document.getElementById('congratulationsSection');
         const reward1 = document.getElementById('rewardRank1');
         const reward2 = document.getElementById('rewardRank2');
@@ -644,11 +681,12 @@
         const titleGeneralRookie = document.getElementById('titleGeneralRookie');
         const congratsTitle = congratSection ? congratSection.querySelector('h4') : null;
         const rankSubText = document.getElementById('modalTeamRankSub');
-
+        
         if (congratSection) {
             congratSection.classList.add('hidden');
             congratSection.classList.remove('flex');
         }
+        
         if (congratsTitle) congratsTitle.innerText = " Congratulation";
         if (reward1) reward1.classList.add('hidden');
         if (reward2) reward2.classList.add('hidden');
@@ -659,13 +697,13 @@
         if (titleBestRookie) titleBestRookie.classList.add('hidden');
         if (titleGeneralRookie) titleGeneralRookie.classList.add('hidden');
         if (document.getElementById('certDynamicRank')) document.getElementById('certDynamicRank').innerText = '-';
-
+        
         let isEligibleForCongrat = false;
         let allTeamsHaveRound1 = false;
         if (r1Idx !== -1 && currentData.length > 0) {
             allTeamsHaveRound1 = currentData.every(r => r[r1Idx] !== null && r[r1Idx].toString().trim() !== "" && r[r1Idx].toString().trim() !== "-");
         }
-
+        
         if (rankSubText) {
             if (allTeamsHaveRound1 && !hasNoAwardAsterisk) {
                 rankSubText.innerText = `อันดับที่ : ${currentAwardRank}`;
@@ -674,7 +712,7 @@
                 rankSubText.classList.add('hidden'); 
             }
         }
-
+        
         if (round1 !== '-' && round1 !== '' && round1 !== null) {
             if (allTeamsHaveRound2 && !hasNoAwardAsterisk && currentAwardRank >= 1 && currentAwardRank <= 10) {
                 isEligibleForCongrat = true;
@@ -690,7 +728,7 @@
                     reward4To10.classList.remove('hidden');
                 }
             }
-
+            
             const cleanMedal = medalCert.toString().toLowerCase();
             if (cleanMedal.includes('gold') || cleanMedal.includes('silver') || cleanMedal.includes('bronze') || cleanMedal.includes('เหรียญ')) {
                 isEligibleForCongrat = true;
@@ -705,7 +743,7 @@
                     }
                 }
             }
-
+            
             if (allTeamsHaveRound2 && hasRookieStar && !hasNoAwardAsterisk) {
                 isEligibleForCongrat = true;
                 if(rewardRookie) {
@@ -717,13 +755,13 @@
                     }
                 }
             }
-
+            
             if (isEligibleForCongrat && congratSection) {
                 congratSection.classList.remove('hidden');
                 congratSection.classList.add('flex');
             }
         }
-
+        
         const modal = document.getElementById('teamDetailModal');
         if (modal) {
             modal.classList.remove('hidden');
@@ -731,7 +769,7 @@
             document.body.style.overflow = 'hidden'; 
         }
     }
-
+    
     function changePage(direction) {
         currentPage += direction;
         const category = categorySelect.value;
@@ -745,7 +783,7 @@
         );
         if(tableTitle) tableTitle.scrollIntoView({ behavior: 'smooth' });
     }
-
+    
     function closeModal() {
         const modal = document.getElementById('teamDetailModal');
         if(modal) {
@@ -754,7 +792,7 @@
             document.body.style.overflow = ''; 
         }
     }
-
+    
     function openMedalInfoModal() {
         const medalModal = document.getElementById('medalInfoModal');
         if(medalModal) {
@@ -762,7 +800,7 @@
             medalModal.classList.add('flex');
         }
     }
-
+    
     function closeMedalInfoModal() {
         const medalModal = document.getElementById('medalInfoModal');
         if(medalModal) {
@@ -770,7 +808,7 @@
             medalModal.classList.remove('flex');
         }
     }
-
+    
     window.onclick = function(event) {
         const modal = document.getElementById('teamDetailModal');
         const medalModal = document.getElementById('medalInfoModal');
@@ -780,22 +818,24 @@
             closeModal();
         }
     }
-
+    
     function updateStatus(isOfficial) {
         if(!statusBadge || !statusDot || !statusText) return;
+        
         statusBadge.classList.remove('hidden');
         statusBadge.classList.add('flex');
+        
         if (isOfficial) {
             statusDot.className = 'w-3 h-3 rounded-full mr-2 dot-blink bg-emerald-500 shadow-sm shadow-emerald-500/50';
             statusText.innerText = 'Official';
-            statusText.className = 'text-emerald-400 font-bold';
+            statusText.className = 'text-emerald-600 font-bold';
         } else {
             statusDot.className = 'w-3 h-3 rounded-full mr-2 dot-blink bg-amber-500 shadow-sm shadow-amber-500/50';
             statusText.innerText = 'Unofficial';
-            statusText.className = 'text-amber-400 font-bold';
+            statusText.className = 'text-amber-600 font-bold';
         }
     }
-
+    
     function showBackendError() {
         if(loading) loading.classList.add('hidden');
         if(tableBody) {
@@ -804,18 +844,19 @@
         }
         updateStatus(false);
     }
-
+    
     function showError(message) {
-        if(tableHeaders) tableHeaders.innerHTML = `<th class="p-4 text-center text-red-400">เกิดข้อผิดพลาด</th>`;
-        if(tableBody) tableBody.innerHTML = `<tr><td class="p-8 text-center text-red-400 font-semibold bg-slate-950/20">${message}</td></tr>`;
+        if(tableHeaders) tableHeaders.innerHTML = `<th class="p-4 text-center text-red-600">เกิดข้อผิดพลาด</th>`;
+        if(tableBody) tableBody.innerHTML = `<tr><td class="p-8 text-center text-red-600 font-semibold bg-red-50">${message}</td></tr>`;
         if(paginationContainer) paginationContainer.classList.add('hidden');
         if(remarkBox) remarkBox.classList.add('hidden');
     }
-
+    
     setInterval(function() {
         const category = categorySelect.value;
         const region = regionSelect.value;
         const modal = document.getElementById('teamDetailModal');
+        
         if (category && region && (!modal || modal.classList.contains('hidden'))) {
             console.log('🔄 อัปเดตข้อมูลอัตโนมัติประจำรอบ 5 นาที...');
             const savedPage = currentPage; 
@@ -829,7 +870,7 @@
             }, 800); 
         }
     }, 5 * 60 * 1000); 
-
+    
     function generateMockData(category, regionName) {
         return {
             headers: ["Medal Certificate", "Team ID", "Team Name", "Institution", "Round 1", "Round 2", "Best Score"],
