@@ -14,29 +14,24 @@
         .dot-blink { animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
         .clickable-row { cursor: pointer; transition: all 0.2s ease; }
-        /* เปลี่ยนสี Hover ให้เหมาะกับ Light Theme */
         .clickable-row:hover { transform: translateY(-1px); background-color: rgba(0, 0, 0, 0.04) !important; }
         .modal-animate { animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes scaleUp { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         
-        /* ปรับสไตล์ Scrollbar สำหรับ Light Theme */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(241, 245, 249, 1); } /* slate-100 */
-        ::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 1); border-radius: 99px; } /* slate-300 */
-        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 1); } /* slate-400 */
+        ::-webkit-scrollbar-track { background: rgba(241, 245, 249, 1); }
+        ::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 1); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 1); }
     </style>
 </head>
-<!-- เปลี่ยนพื้นหลังเป็น bg-slate-50 -->
 <body class="text-slate-800 min-h-screen flex flex-col justify-between bg-slate-50 bg-fixed text-base overflow-x-hidden">
     
-    <!-- Header: Light Theme -->
+    <!-- Header -->
     <header class="relative bg-white/90 backdrop-blur-xl border-b border-slate-200 py-6 px-4 sm:px-6 lg:px-10 shadow-sm w-full flex items-center justify-center min-h-[100px] z-10">
         <div class="absolute left-4 sm:left-6 lg:left-10 flex items-center justify-center">
-            <!-- คง Logo เดิมไว้ -->
             <img src="https://lh3.googleusercontent.com/d/1jly-uEyURhUVCr1epKKDkjtlNRMKhWTq" alt="WRO Logo" class="h-12 sm:h-16 lg:h-20 w-auto object-contain drop-shadow-sm">
         </div>
         <div class="text-center">
-            <!-- เปลี่ยนสีตัวอักษร Gradient Header ให้สว่างและเข้มขึ้น -->
             <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-wider bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent drop-shadow-sm">LEADERBOARD</h1>
             <p class="text-slate-500 text-xs sm:text-base lg:text-lg mt-1 tracking-wider font-semibold opacity-90">World Robot Olympiad 2026</p>
         </div>
@@ -128,6 +123,7 @@
                 <div class="text-slate-700 flex flex-wrap gap-x-4 gap-y-1">
                     <span>⭐ = Team Rookie</span>
                     <span>⚡️ = เข้าร่วมแข่งขันแบบข้ามภาค</span>
+                </div>
             </div>
             <div class="flex items-start">
                 <span class="font-bold text-indigo-600 min-w-[130px]">Medal Certificate :</span>
@@ -156,7 +152,6 @@
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
                             <span id="modalTeamId" class="inline-block bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md tracking-wider uppercase">TEAM ID: -</span>
-                            <!-- ⚡️ เพิ่ม ป้ายประกาศข้ามภาค -->
                             <span id="crossRegionBadge" class="hidden bg-amber-100 border border-amber-300 text-amber-800 text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md tracking-wider">⚡️ เข้าร่วมแข่งขันแบบข้ามภาค</span>
                         </div>
                         <h3 id="modalTeamName" class="text-lg md:text-xl font-bold mt-1.5 tracking-wide text-slate-900 truncate">Team Name</h3>
@@ -380,7 +375,6 @@
     </div>
 </body>
 
-<!-- Javascript (คงฟังก์ชันเดิม 100%) -->
 <script>
     const GOOGLE_API_URL = "https://script.google.com/macros/s/AKfycbye2Ei6OXOzyoYh9gr7vdB6yLmFTzvtp57U0NndD9S1vATSf3xdApVFSzn_6M6AYaU/exec"; 
     
@@ -574,7 +568,6 @@
         let awardRankCounter = 0;
         const awardRanksMap = currentData.map((row) => {
             const teamName = (row[2] || '').toString().trim();
-            // ทีมที่มี * หรือมี ⚡️ ในชื่อ จะถูกข้ามลำดับรางวัลทันที
             if (teamName.endsWith('*') || teamName.includes('⚡')) {
                 return -1; 
             } else {
@@ -676,7 +669,7 @@
         if (document.getElementById('modalRound2Score')) document.getElementById('modalRound2Score').innerText = round2;
         if (document.getElementById('modalBestScore')) document.getElementById('modalBestScore').innerText = bestScore;
         
-        // --- ⚡️ แสดง/ซ่อน ป้ายประกาศ "เข้าร่วมแข่งขันแบบข้ามภาค" ---
+        // ⚡️ แสดง/ซ่อน ป้ายประกาศ "เข้าร่วมแข่งขันแบบข้ามภาค"
         const crossRegionBadge = document.getElementById('crossRegionBadge');
         if (crossRegionBadge) {
             if (hasLightning) {
@@ -687,8 +680,106 @@
                 crossRegionBadge.classList.remove('inline-block');
             }
         }
-
-        // ... [โค้ดส่วนที่เหลือของ openTeamDetail ทำงานตามเดิม] ...
+        
+        const congratSection = document.getElementById('congratulationsSection');
+        const reward1 = document.getElementById('rewardRank1');
+        const reward2 = document.getElementById('rewardRank2');
+        const reward3 = document.getElementById('rewardRank3');
+        const reward4To10 = document.getElementById('rewardRank4To10');
+        const rewardMedalBadge = document.getElementById('rewardMedalBadge');
+        const rewardRookie = document.getElementById('rewardRookie');
+        const titleBestRookie = document.getElementById('titleBestRookie');
+        const titleGeneralRookie = document.getElementById('titleGeneralRookie');
+        const congratsTitle = congratSection ? congratSection.querySelector('h4') : null;
+        const rankSubText = document.getElementById('modalTeamRankSub');
+        
+        if (congratSection) {
+            congratSection.classList.add('hidden');
+            congratSection.classList.remove('flex');
+        }
+        
+        if (congratsTitle) congratsTitle.innerText = " Congratulation";
+        if (reward1) reward1.classList.add('hidden');
+        if (reward2) reward2.classList.add('hidden');
+        if (reward3) reward3.classList.add('hidden');
+        if (reward4To10) reward4To10.classList.add('hidden');
+        if (rewardMedalBadge) rewardMedalBadge.classList.add('hidden');
+        if (rewardRookie) rewardRookie.classList.add('hidden');
+        if (titleBestRookie) titleBestRookie.classList.add('hidden');
+        if (titleGeneralRookie) titleGeneralRookie.classList.add('hidden');
+        if (document.getElementById('certDynamicRank')) document.getElementById('certDynamicRank').innerText = '-';
+        
+        let isEligibleForCongrat = false;
+        let allTeamsHaveRound1 = false;
+        if (r1Idx !== -1 && currentData.length > 0) {
+            allTeamsHaveRound1 = currentData.every(r => r[r1Idx] !== null && r[r1Idx].toString().trim() !== "" && r[r1Idx].toString().trim() !== "-");
+        }
+        
+        if (rankSubText) {
+            if (allTeamsHaveRound1 && !hasNoAward && currentAwardRank > 0) {
+                rankSubText.innerText = `อันดับที่ : ${currentAwardRank}`;
+                rankSubText.classList.remove('hidden'); 
+            } else {
+                rankSubText.classList.add('hidden'); 
+            }
+        }
+        
+        if (round1 !== '-' && round1 !== '' && round1 !== null) {
+            if (allTeamsHaveRound2 && !hasNoAward && currentAwardRank >= 1 && currentAwardRank <= 10) {
+                isEligibleForCongrat = true;
+                if (currentAwardRank === 1 && reward1) {
+                    reward1.classList.remove('hidden');
+                } else if (currentAwardRank === 2 && reward2) {
+                    reward2.classList.remove('hidden');
+                } else if (currentAwardRank === 3 && reward3) {
+                    reward3.classList.remove('hidden');
+                } else if (currentAwardRank >= 4 && currentAwardRank <= 10 && reward4To10) {
+                    const dynRank = document.getElementById('certDynamicRank');
+                    if(dynRank) dynRank.innerText = currentAwardRank;
+                    reward4To10.classList.remove('hidden');
+                }
+            }
+            
+            const cleanMedal = medalCert.toString().toLowerCase();
+            if (cleanMedal.includes('gold') || cleanMedal.includes('silver') || cleanMedal.includes('bronze') || cleanMedal.includes('เหรียญ')) {
+                isEligibleForCongrat = true;
+                if(rewardMedalBadge) {
+                    rewardMedalBadge.classList.remove('hidden');
+                    const iconEl = document.getElementById('medalRewardIcon');
+                    if (iconEl) {
+                        if (cleanMedal.includes('gold') || cleanMedal.includes('ทอง')) iconEl.innerText = '🥇';
+                        else if (cleanMedal.includes('silver') || cleanMedal.includes('เงิน')) iconEl.innerText = '🥈';
+                        else if (cleanMedal.includes('bronze') || cleanMedal.includes('ทองแดง')) iconEl.innerText = '🥉';
+                        else iconEl.innerText = '🏅';
+                    }
+                }
+            }
+            
+            if (allTeamsHaveRound2 && hasRookieStar && !hasNoAward) {
+                isEligibleForCongrat = true;
+                if(rewardRookie) {
+                    rewardRookie.classList.remove('hidden');
+                    if (realIndex === bestRookieIndex && titleBestRookie) {
+                        titleBestRookie.classList.remove('hidden');
+                    } else if (titleGeneralRookie) {
+                        titleGeneralRookie.classList.remove('hidden');
+                    }
+                }
+            }
+            
+            if (isEligibleForCongrat && congratSection) {
+                congratSection.classList.remove('hidden');
+                congratSection.classList.add('flex');
+            }
+        }
+        
+        const modal = document.getElementById('teamDetailModal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; 
+        }
+    }
     
     function changePage(direction) {
         currentPage += direction;
