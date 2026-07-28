@@ -501,7 +501,7 @@
         
         bestRookieIndex = currentData.findIndex(row => {
             const teamName = (row[2] || '').toString().trim();
-            return teamName.includes('⭐') && !teamName.endsWith('*');
+            return teamName.includes('⭐') && !teamName.endsWith('*') && !teamName.includes('⚡');
         });
         
         updateStatus(allTeamsHaveRound2);
@@ -515,7 +515,6 @@
     
     function updateHeaderColor(category) {
         if (!tableHeaders) return;
-        // เปลี่ยนสีหัวตารางแบบไดนามิกให้สอดคล้องกับ Light Theme
         tableHeaders.className = "border-b text-base uppercase tracking-wider text-slate-700 font-bold transition-colors duration-300";
         if (category === 'Elementary') {
             tableHeaders.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
@@ -569,7 +568,8 @@
         let awardRankCounter = 0;
         const awardRanksMap = currentData.map((row) => {
             const teamName = (row[2] || '').toString().trim();
-            if (teamName.endsWith('*')) {
+            // ทีมที่มี * หรือมี ⚡️ ในชื่อ จะถูกข้ามลำดับรางวัลทันที
+            if (teamName.endsWith('*') || teamName.includes('⚡')) {
                 return -1; 
             } else {
                 awardRankCounter++;
@@ -582,7 +582,6 @@
             const tr = document.createElement('tr');
             const currentAwardRank = awardRanksMap[realIndex];
             
-            // เปลี่ยนสีพื้นหลังในแต่ละแถวสำหรับ Light Theme
             tr.className = 'clickable-row border-b border-slate-200 ';
             if (allTeamsHaveRound2) {
                 if (currentAwardRank >= 1 && currentAwardRank <= 3) {
@@ -620,7 +619,6 @@
                     td.className = 'p-4 font-bold text-slate-900';
                 }
                 
-                // ไฮไลต์ Best Score สำหรับ Light Theme
                 if (cellIndex === r1Idx && isR1Match) {
                     td.className = 'p-4 bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 rounded-xl';
                 } else if (cellIndex === r2Idx && isR2Match) {
@@ -661,6 +659,8 @@
         
         const hasRookieStar = teamName.trim().includes('⭐'); 
         const hasNoAwardAsterisk = teamName.trim().endsWith('*'); 
+        const hasLightning = teamName.trim().includes('⚡'); 
+        const hasNoAward = hasNoAwardAsterisk || hasLightning; 
         
         if (document.getElementById('modalTeamId')) document.getElementById('modalTeamId').innerText = `TEAM ID: ${teamId}`;
         if (document.getElementById('modalTeamName')) document.getElementById('modalTeamName').innerText = teamName;
@@ -705,7 +705,7 @@
         }
         
         if (rankSubText) {
-            if (allTeamsHaveRound1 && !hasNoAwardAsterisk) {
+            if (allTeamsHaveRound1 && !hasNoAward && currentAwardRank > 0) {
                 rankSubText.innerText = `อันดับที่ : ${currentAwardRank}`;
                 rankSubText.classList.remove('hidden'); 
             } else {
@@ -714,7 +714,7 @@
         }
         
         if (round1 !== '-' && round1 !== '' && round1 !== null) {
-            if (allTeamsHaveRound2 && !hasNoAwardAsterisk && currentAwardRank >= 1 && currentAwardRank <= 10) {
+            if (allTeamsHaveRound2 && !hasNoAward && currentAwardRank >= 1 && currentAwardRank <= 10) {
                 isEligibleForCongrat = true;
                 if (currentAwardRank === 1 && reward1) {
                     reward1.classList.remove('hidden');
@@ -744,7 +744,7 @@
                 }
             }
             
-            if (allTeamsHaveRound2 && hasRookieStar && !hasNoAwardAsterisk) {
+            if (allTeamsHaveRound2 && hasRookieStar && !hasNoAward) {
                 isEligibleForCongrat = true;
                 if(rewardRookie) {
                     rewardRookie.classList.remove('hidden');
@@ -875,7 +875,7 @@
         return {
             headers: ["Medal Certificate", "Team ID", "Team Name", "Institution", "Round 1", "Round 2", "Best Score"],
             data: [
-                ["🏅 Gold", "WRO-001", "Nexus Alpha", "โรงเรียนวิทยาศาสตร์เทคโนโลยี", "120", "150", "150"],
+                ["🏅 Gold", "WRO-001", "Nexus Alpha ⚡️", "โรงเรียนวิทยาศาสตร์เทคโนโลยี", "120", "150", "150"],
                 ["🏅 Gold", "WRO-002", "Cyber Knight *", "สถาบันนวัตกรรมหุ่นยนต์", "150", "90", "150"], 
                 ["🏅 Gold", "WRO-003", "Robo Genius ⭐", "วิทยาลัยเทคนิคศึกษา", "140", "140", "140"], 
                 ["🥈 Silver", "WRO-004", "Mecha Core", "โรงเรียนสาธิตประจำจังหวัด", "110", "135", "135"],
