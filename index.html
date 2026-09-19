@@ -8,9 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Prompt', sans-serif; 
-        }
+        body { font-family: 'Prompt', sans-serif; }
         .dot-blink { animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
         .clickable-row { cursor: pointer; transition: all 0.2s ease; }
@@ -372,7 +370,7 @@
     </footer>
     
     <div class="fixed bottom-2 right-4 text-indigo-600 font-bold bg-white/90 border border-slate-200 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs md:text-sm shadow-sm z-50 pointer-events-none select-none font-mono tracking-wide">
-        v3.4.18
+        v3.5.0
     </div>
 </body>
 
@@ -404,48 +402,77 @@
     let currentData = [];
     let currentPage = 1;
     let bestRookieIndex = -1; 
+    let colIndexes = {}; // ⚡ Dynamic Column Mapping Object
+    let isFetching = false; // ⚡ ตัวแปรควบคุม Request ป้องกันการยิงซ้ำ
     const rowsPerPage = 15; 
-    const columnsToHide = [1, 3, 4, 5]; 
     
     categorySelect.addEventListener('change', () => {
         regionSelect.disabled = false;
         if(regionSelect.value) {
             currentPage = 1;
-            callBackend();
+            callBackend(false);
         }
     });
     
     regionSelect.addEventListener('change', () => {
         currentPage = 1;
-        callBackend();
+        callBackend(false);
     });
     
     prevBtn.addEventListener('click', () => changePage(-1));
     nextBtn.addEventListener('click', () => changePage(1));
     prevBtnMobile.addEventListener('click', () => changePage(-1));
     nextBtnMobile.addEventListener('click', () => changePage(1));
+
+    // ⚡ ฟังก์ชันสำหรับค้นหาดัชนีคอลัมน์แบบ Dynamic ป้องกันตารางพังเมื่อย้ายคอลัมน์ใน Sheets
+    function parseColumnIndexes(headers) {
+        const norm = s => (s || '').toString().toLowerCase().trim();
+        
+        let medal = headers.findIndex(h => norm(h).includes('medal') || norm(h).includes('เหรียญ') || norm(h).includes('เกียรติบัตร'));
+        let id = headers.findIndex(h => norm(h).includes('team id') || norm(h).includes('รหัสทีม') || norm(h) === 'id');
+        let name = headers.findIndex(h => norm(h).includes('team name') || norm(h).includes('ชื่อทีม') || norm(h) === 'team');
+        let inst = headers.findIndex(h => norm(h).includes('institution') || norm(h).includes('school') || norm(h).includes('สถาบัน') || norm(h).includes('โรงเรียน'));
+        let r1 = headers.findIndex(h => norm(h).includes('round 1') || norm(h).includes('รอบ 1'));
+        let r2 = headers.findIndex(h => norm(h).includes('round 2') || norm(h).includes('รอบ 2'));
+        let best = headers.findIndex(h => norm(h).includes('best') || norm(h).includes('คะแนนดีที่สุด'));
+
+        return {
+            medalIdx: medal !== -1 ? medal : 0,
+            teamIdIdx: id !== -1 ? id : 1,
+            teamNameIdx: name !== -1 ? name : 2,
+            institutionIdx: inst !== -1 ? inst : 3,
+            r1Idx: r1 !== -1 ? r1 : 4,
+            r2Idx: r2 !== -1 ? r2 : 5,
+            bestIdx: best !== -1 ? best : 6
+        };
+    }
     
-    function callBackend() {
+    function callBackend(isSilent = false) {
+        if (isFetching) return; // หากกำลังดึงข้อมูลอยู่ ให้ข้ามไป
+        
         const category = categorySelect.value;
         const region = regionSelect.value;
         const regionName = regionSelect.options[regionSelect.selectedIndex].text;
         
         if (!category || !region) return;
+
+        isFetching = true;
         
-        if (tableBody) tableBody.parentElement.parentElement.classList.add('hidden');
-        if (paginationContainer) paginationContainer.classList.add('hidden');
-        if (remarkBox) remarkBox.classList.add('hidden');
-        if (tableSubtitle) tableSubtitle.classList.hidden = true;
-        if (loading) loading.classList.remove('hidden');
+        // หากเป็นการโหลดปรกติ (ไม่ใช่ Silent Refresh) ให้แสดง UI Loading
+        if (!isSilent) {
+            if (tableBody) tableBody.parentElement.parentElement.classList.add('hidden');
+            if (paginationContainer) paginationContainer.classList.add('hidden');
+            if (remarkBox) remarkBox.classList.add('hidden');
+            if (tableSubtitle) tableSubtitle.classList.add('hidden');
+            if (loading) loading.classList.remove('hidden');
+        }
         
         if (tableTitle) tableTitle.innerText = `${category} - ${regionName}`;
-        
         updateHeaderColor(category);
         
         const isGoogleEnv = typeof google !== 'undefined' && google.script && google.script.run;
         
         if (isGoogleEnv) {
-            console.log('⚡ Running on Google Environment: Fetching via google.script.run');
             google.script.run
                 .withSuccessHandler(function(result) {
                     handleResponseData(result);
@@ -455,7 +482,6 @@
                 })
                 .getLeaderboardData(category, region);
         } else if (GOOGLE_API_URL && !GOOGLE_API_URL.includes('XXXXX')) {
-            console.log('🌐 Running on GitHub/External: Fetching via API URL');
             const fetchUrl = `${GOOGLE_API_URL}?category=${encodeURIComponent(category)}&region=${encodeURIComponent(region)}`;
             fetch(fetchUrl)
                 .then(response => {
@@ -470,15 +496,15 @@
                     showBackendError();
                 });
         } else {
-            console.log('💻 Running Offline: Loading Mock Data');
             setTimeout(function() {
                 const mockResult = generateMockData(category, regionName);
                 handleResponseData(mockResult);
-            }, 600);
+            }, 400);
         }
     }
     
     function handleResponseData(result) {
+        isFetching = false;
         if (loading) loading.classList.add('hidden');
         if (tableBody) tableBody.parentElement.parentElement.classList.remove('hidden');
         
@@ -490,23 +516,28 @@
         
         currentHeaders = result.headers || [];
         currentData = result.data || []; 
-        
-        const r1Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1'));
-        const r2Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 2') || (h||'').toString().includes('รอบ 2'));
-        const bestIdx = 6; 
+
+        // ⚡ หาตำแหน่งคอลัมน์แบบ Dynamic
+        colIndexes = parseColumnIndexes(currentHeaders);
         
         let allTeamsHaveRound2 = false;
-        if (r2Idx !== -1 && currentData.length > 0) {
-            allTeamsHaveRound2 = currentData.every(row => row[r2Idx] !== null && row[r2Idx].toString().trim() !== "");
+        if (colIndexes.r2Idx !== -1 && currentData.length > 0) {
+            allTeamsHaveRound2 = currentData.every(row => {
+                const val = row[colIndexes.r2Idx];
+                return val !== null && val !== undefined && val.toString().trim() !== "";
+            });
         }
         
+        // ⚡ ตรวจหา Best Rookie ด้วย Regex ที่ปลอดภัยจากปัญหา Trailing Space
         bestRookieIndex = currentData.findIndex(row => {
-            const teamName = (row[2] || '').toString().trim();
-            return teamName.includes('⭐') && !teamName.endsWith('*') && !teamName.includes('⚡');
+            const teamName = (row[colIndexes.teamNameIdx] || '').toString().trim();
+            const hasRookieStar = /⭐/.test(teamName);
+            const hasNoAward = /\*\s*$/.test(teamName) || /⚡/.test(teamName);
+            return hasRookieStar && !hasNoAward;
         });
         
         updateStatus(allTeamsHaveRound2);
-        renderPaginationTable(r1Idx, r2Idx, bestIdx, allTeamsHaveRound2);
+        renderPaginationTable(allTeamsHaveRound2);
         
         if(currentData.length > 0) {
             if (remarkBox) remarkBox.classList.remove('hidden');
@@ -528,7 +559,7 @@
         }
     }
     
-    function renderPaginationTable(r1Idx, r2Idx, bestIdx, allTeamsHaveRound2) {
+    function renderPaginationTable(allTeamsHaveRound2) {
         if (!tableHeaders || !tableBody) return;
         
         tableHeaders.innerHTML = '';
@@ -539,6 +570,9 @@
             if (remarkBox) remarkBox.classList.add('hidden');
             return;
         }
+
+        // คอลัมน์ที่จะซ่อนบนตารางสรุปหน้าหลัก (แสดงเฉพาะ Medal, Team Name, Best Score)
+        const columnsToHide = [colIndexes.teamIdIdx, colIndexes.institutionIdx, colIndexes.r1Idx, colIndexes.r2Idx];
         
         currentHeaders.forEach((header, index) => {
             if (columnsToHide.includes(index)) return; 
@@ -557,8 +591,9 @@
         }
         
         const totalRecords = currentData.length;
-        const totalPages = Math.ceil(totalRecords / rowsPerPage);
+        const totalPages = Math.max(1, Math.ceil(totalRecords / rowsPerPage));
         
+        // ⚡ ป้องกันขอบเขตหน้าเกินเมื่อข้อมูลมีการเปลี่ยนแปลง
         if (currentPage < 1) currentPage = 1;
         if (currentPage > totalPages) currentPage = totalPages;
         
@@ -568,8 +603,9 @@
         
         let awardRankCounter = 0;
         const awardRanksMap = currentData.map((row) => {
-            const teamName = (row[2] || '').toString().trim();
-            if (teamName.endsWith('*') || teamName.includes('⚡')) {
+            const teamName = (row[colIndexes.teamNameIdx] || '').toString().trim();
+            const hasNoAward = /\*\s*$/.test(teamName) || /⚡/.test(teamName);
+            if (hasNoAward) {
                 return -1; 
             } else {
                 awardRankCounter++;
@@ -595,11 +631,11 @@
                 tr.className += realIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50';
             }
             
-            tr.addEventListener('click', () => openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2, currentAwardRank));
+            tr.addEventListener('click', () => openTeamDetail(row, realIndex, allTeamsHaveRound2, currentAwardRank));
             
-            const r1Value = r1Idx !== -1 ? parseFloat(row[r1Idx]) : NaN;
-            const r2Value = r2Idx !== -1 ? parseFloat(row[r2Idx]) : NaN;
-            const bestValue = parseFloat(row[bestIdx]);
+            const r1Value = parseFloat(row[colIndexes.r1Idx]);
+            const r2Value = parseFloat(row[colIndexes.r2Idx]);
+            const bestValue = parseFloat(row[colIndexes.bestIdx]);
             
             let isR1Match = (!isNaN(r1Value) && !isNaN(bestValue) && r1Value === bestValue);
             let isR2Match = (!isNaN(r2Value) && !isNaN(bestValue) && r2Value === bestValue);
@@ -613,15 +649,15 @@
                 
                 const td = document.createElement('td');
                 td.className = 'p-4 font-medium'; 
-                td.innerText = cell !== "" ? cell : '-';
+                td.innerText = (cell !== null && cell !== undefined && cell !== "") ? cell : '-';
                 
-                if (cellIndex === 2) { 
+                if (cellIndex === colIndexes.teamNameIdx) { 
                     td.className = 'p-4 font-bold text-slate-900';
                 }
                 
-                if (cellIndex === r1Idx && isR1Match) {
+                if (cellIndex === colIndexes.r1Idx && isR1Match) {
                     td.className = 'p-4 bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 rounded-xl';
-                } else if (cellIndex === r2Idx && isR2Match) {
+                } else if (cellIndex === colIndexes.r2Idx && isR2Match) {
                     td.className = 'p-4 bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 rounded-xl';
                 }
                 
@@ -648,18 +684,19 @@
         toggleBtnStyle(prevBtnMobile); toggleBtnStyle(nextBtnMobile);
     }
     
-    function openTeamDetail(row, r1Idx, r2Idx, bestIdx, realIndex, allTeamsHaveRound2, currentAwardRank) {
-        const medalCert = row[0] !== "" ? row[0] : '-';   
-        const teamId = row[1] !== "" ? row[1] : '-';      
-        const teamName = row[2] !== "" ? row[2] : '-';    
-        const institution = row[3] !== "" ? row[3] : '-'; 
-        const round1 = (r1Idx !== -1 && row[r1Idx] !== "") ? row[r1Idx] : '-';
-        const round2 = (r2Idx !== -1 && row[r2Idx] !== "") ? row[r2Idx] : '-';
-        const bestScore = row[bestIdx] !== "" ? row[bestIdx] : '-';
+    function openTeamDetail(row, realIndex, allTeamsHaveRound2, currentAwardRank) {
+        const medalCert = (row[colIndexes.medalIdx] !== undefined && row[colIndexes.medalIdx] !== "") ? row[colIndexes.medalIdx] : '-';   
+        const teamId = (row[colIndexes.teamIdIdx] !== undefined && row[colIndexes.teamIdIdx] !== "") ? row[colIndexes.teamIdIdx] : '-';      
+        const teamName = (row[colIndexes.teamNameIdx] !== undefined && row[colIndexes.teamNameIdx] !== "") ? row[colIndexes.teamNameIdx] : '-';    
+        const institution = (row[colIndexes.institutionIdx] !== undefined && row[colIndexes.institutionIdx] !== "") ? row[colIndexes.institutionIdx] : '-'; 
+        const round1 = (colIndexes.r1Idx !== -1 && row[colIndexes.r1Idx] !== undefined && row[colIndexes.r1Idx] !== "") ? row[colIndexes.r1Idx] : '-';
+        const round2 = (colIndexes.r2Idx !== -1 && row[colIndexes.r2Idx] !== undefined && row[colIndexes.r2Idx] !== "") ? row[colIndexes.r2Idx] : '-';
+        const bestScore = (row[colIndexes.bestIdx] !== undefined && row[colIndexes.bestIdx] !== "") ? row[colIndexes.bestIdx] : '-';
         
-        const hasRookieStar = teamName.trim().includes('⭐'); 
-        const hasNoAwardAsterisk = teamName.trim().endsWith('*'); 
-        const hasLightning = teamName.trim().includes('⚡'); 
+        const cleanTeamName = teamName.toString().trim();
+        const hasRookieStar = /⭐/.test(cleanTeamName); 
+        const hasNoAwardAsterisk = /\*\s*$/.test(cleanTeamName); 
+        const hasLightning = /⚡/.test(cleanTeamName); 
         const hasNoAward = hasNoAwardAsterisk || hasLightning; 
         
         if (document.getElementById('modalTeamId')) document.getElementById('modalTeamId').innerText = `TEAM ID: ${teamId}`;
@@ -712,8 +749,8 @@
         
         let isEligibleForCongrat = false;
         let allTeamsHaveRound1 = false;
-        if (r1Idx !== -1 && currentData.length > 0) {
-            allTeamsHaveRound1 = currentData.every(r => r[r1Idx] !== null && r[r1Idx].toString().trim() !== "" && r[r1Idx].toString().trim() !== "-");
+        if (colIndexes.r1Idx !== -1 && currentData.length > 0) {
+            allTeamsHaveRound1 = currentData.every(r => r[colIndexes.r1Idx] !== null && r[colIndexes.r1Idx] !== undefined && r[colIndexes.r1Idx].toString().trim() !== "" && r[colIndexes.r1Idx].toString().trim() !== "-");
         }
         
         if (rankSubText) {
@@ -787,12 +824,7 @@
         const category = categorySelect.value;
         updateHeaderColor(category);
         const isOfficialBoard = (statusText && statusText.innerText.trim() === 'Official');
-        renderPaginationTable(
-            currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1')),
-            currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 2') || (h||'').toString().includes('รอบ 2')),
-            6,
-            isOfficialBoard
-        );
+        renderPaginationTable(isOfficialBoard);
         if(tableTitle) tableTitle.scrollIntoView({ behavior: 'smooth' });
     }
     
@@ -849,6 +881,7 @@
     }
     
     function showBackendError() {
+        isFetching = false;
         if(loading) loading.classList.add('hidden');
         if(tableBody) {
             tableBody.parentElement.parentElement.classList.remove('hidden');
@@ -864,22 +897,15 @@
         if(remarkBox) remarkBox.classList.add('hidden');
     }
     
+    // ⚡ ระบบ Silent Auto-Refresh ทุกๆ 5 นาที (ทำงานแบบ Asynchronous ปลอดภัยจาก Race Condition)
     setInterval(function() {
         const category = categorySelect.value;
         const region = regionSelect.value;
         const modal = document.getElementById('teamDetailModal');
         
         if (category && region && (!modal || modal.classList.contains('hidden'))) {
-            console.log('🔄 อัปเดตข้อมูลอัตโนมัติประจำรอบ 5 นาที...');
-            const savedPage = currentPage; 
-            callBackend(); 
-            setTimeout(function() {
-                currentPage = savedPage; 
-                const r1Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 1') || (h||'').toString().includes('รอบ 1'));
-                const r2Idx = currentHeaders.findIndex(h => (h||'').toString().toLowerCase().includes('round 2') || (h||'').toString().includes('รอบ 2'));
-                const isOfficialBoard = (statusText && statusText.innerText.trim() === 'Official');
-                renderPaginationTable(r1Idx, r2Idx, 6, isOfficialBoard);
-            }, 800); 
+            console.log('🔄 อัปเดตข้อมูลอัตโนมัติประจำรอบ 5 นาที (Silent Refresh)...');
+            callBackend(true); // เรียกแบบ Silent Refresh โดยไม่แสดงหน้าจอ Loading
         }
     }, 5 * 60 * 1000); 
     
