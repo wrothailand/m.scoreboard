@@ -38,11 +38,11 @@
     <!-- Main Content -->
     <main class="w-full max-w-full px-4 sm:px-6 lg:px-10 py-6 flex-grow flex flex-col justify-start">
         
-        <!-- Dropdown Selection -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 w-full">
+        <!-- Dropdown Selection Grid (รุ่น / ภูมิภาค / ค้นหารหัสทีม) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 w-full">
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <label class="block text-xs font-semibold text-slate-500 mb-1 tracking-wider">รุ่นการแข่งขัน (Category)</label>
-                <select id="categorySelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-lg font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer">
+                <select id="categorySelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-base sm:text-lg font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer">
                     <option value="" class="bg-white text-slate-800" disabled selected>-- เลือกรุ่นการแข่งขัน --</option>
                     <option value="Elementary" class="bg-white text-slate-800">Elementary</option>
                     <option value="Junior" class="bg-white text-slate-800">Junior</option>
@@ -51,7 +51,7 @@
             </div>
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                 <label class="block text-xs font-semibold text-slate-500 mb-1 tracking-wider">ภูมิภาค (Region)</label>
-                <select id="regionSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-lg font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                <select id="regionSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-base sm:text-lg font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" disabled>
                     <option value="" class="bg-white text-slate-800" disabled selected>-- เลือกภูมิภาค --</option>
                     <option value="Southern" class="bg-white text-slate-800">ภาคใต้</option>
                     <option value="BKK" class="bg-white text-slate-800">กรุงเทพมหานคร</option>
@@ -59,6 +59,12 @@
                     <option value="Isan" class="bg-white text-slate-800">ภาคตะวันออกเฉียงเหนือ</option>
                     <option value="Northern" class="bg-white text-slate-800">ภาคเหนือ</option>
                     <option value="Thailand" class="bg-white text-slate-800 font-bold text-indigo-600">🇹🇭 ชิงแชมป์ประเทศไทย</option>
+                </select>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <label class="block text-xs font-semibold text-slate-500 mb-1 tracking-wider">ค้นหาทีมด้วย Team ID</label>
+                <select id="teamSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-base sm:text-lg font-medium text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                    <option value="" class="bg-white text-slate-800">-- แสดงทุกทีม (แสดงทั้งหมด) --</option>
                 </select>
             </div>
         </div>
@@ -75,7 +81,7 @@
             </div>
         </div>
         
-        <!-- Leaderboard Table Container -->
+        <!-- Leaderboard Table Container (ตารางยาวแบบเลื่อนยาวต่อเนื่อง) -->
         <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden w-full flex flex-col justify-between flex-grow shadow-md">
             <div class="overflow-x-auto w-full">
                 <table class="w-full text-left border-collapse">
@@ -90,28 +96,6 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-            
-            <!-- Pagination Container -->
-            <div id="paginationContainer" class="hidden bg-slate-50 px-4 py-4 flex items-center justify-between border-t border-slate-200 sm:px-6 text-base w-full">
-                <div class="flex-1 flex justify-between sm:hidden">
-                    <button id="prevBtnMobile" class="relative inline-flex items-center px-4 py-2 border border-slate-300 font-medium rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none shadow-sm">ก่อนหน้า</button>
-                    <button id="nextBtnMobile" class="ml-3 relative inline-flex items-center px-4 py-2 border border-slate-300 font-medium rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none shadow-sm">ถัดไป</button>
-                </div>
-                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                    <div>
-                        <p class="text-sm text-slate-600 font-medium">
-                            แสดงรายการที่ <span id="startRange" class="font-bold text-indigo-600">0</span> ถึง <span id="endRange" class="font-bold text-indigo-600">0</span> จากทั้งหมด <span id="totalRows" class="font-bold text-slate-900">0</span> รายการ
-                        </p>
-                    </div>
-                    <div>
-                        <nav class="relative z-0 inline-flex rounded-xl -space-x-px shadow-sm" aria-label="Pagination">
-                            <button id="prevBtn" class="relative inline-flex items-center px-4 py-2 rounded-l-xl border border-slate-300 bg-white font-medium text-slate-700 hover:bg-slate-50 focus:outline-none">ก่อนหน้า</button>
-                            <span id="pageNumberDisplay" class="bg-slate-50 border-slate-300 text-indigo-700 relative inline-flex items-center px-4 py-2 border font-semibold">หน้า 1</span>
-                            <button id="nextBtn" class="relative inline-flex items-center px-4 py-2 rounded-r-xl border border-slate-300 bg-white font-medium text-slate-700 hover:bg-slate-50 focus:outline-none">ถัดไป</button>
-                        </nav>
-                    </div>
-                </div>
             </div>
         </div>
         
@@ -357,7 +341,7 @@
     </footer>
     
     <div class="fixed bottom-2 right-4 text-indigo-600 font-bold bg-white/90 border border-slate-200 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs md:text-sm shadow-sm z-50 pointer-events-none select-none font-mono tracking-wide">
-        v3.6.0
+        v3.7.0
     </div>
 </body>
 
@@ -366,6 +350,7 @@
     
     const categorySelect = document.getElementById('categorySelect');
     const regionSelect = document.getElementById('regionSelect');
+    const teamSelect = document.getElementById('teamSelect');
     const tableTitle = document.getElementById('tableTitle');
     const tableSubtitle = document.getElementById('tableSubtitle');
     const tableHeaders = document.getElementById('tableHeaders');
@@ -375,44 +360,31 @@
     const statusDot = document.getElementById('statusDot');
     const statusText = document.getElementById('statusText');
     const remarkBox = document.getElementById('remarkBox');
-    const paginationContainer = document.getElementById('paginationContainer');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const prevBtnMobile = document.getElementById('prevBtnMobile');
-    const nextBtnMobile = document.getElementById('nextBtnMobile');
-    const pageNumberDisplay = document.getElementById('pageNumberDisplay');
-    const startRange = document.getElementById('startRange');
-    const textEndRange = document.getElementById('endRange');
-    const totalRows = document.getElementById('totalRows');
     
     let currentHeaders = [];
     let currentData = [];
-    let currentPage = 1;
     let bestRookieIndex = -1; 
     let colIndexes = {}; 
     let isFetching = false; 
     let isThailandMode = false;
-    const rowsPerPage = 15; 
     
     categorySelect.addEventListener('change', () => {
         regionSelect.disabled = false;
         if(regionSelect.value) {
-            currentPage = 1;
             callBackend(false);
         }
     });
     
     regionSelect.addEventListener('change', () => {
-        currentPage = 1;
         callBackend(false);
     });
-    
-    prevBtn.addEventListener('click', () => changePage(-1));
-    nextBtn.addEventListener('click', () => changePage(1));
-    prevBtnMobile.addEventListener('click', () => changePage(-1));
-    nextBtnMobile.addEventListener('click', () => changePage(1));
 
-    // ⚡ ฟังก์ชันตรวจจับตำแหน่งคอลัมน์ Dynamic (รองรับทั้งภูมิภาค B:H และ ชิงแชมป์ประเทศไทย B:L)
+    teamSelect.addEventListener('change', () => {
+        const isOfficialBoard = (statusText && statusText.innerText.trim() === 'Official');
+        renderLongTable(isOfficialBoard);
+    });
+
+    // ⚡ ฟังก์ชันตรวจจับตำแหน่งคอลัมน์ Dynamic
     function parseColumnIndexes(headers, isThailand) {
         const norm = s => (s || '').toString().toLowerCase().trim();
         
@@ -422,7 +394,6 @@
         let inst = headers.findIndex(h => norm(h).includes('institution') || norm(h).includes('school') || norm(h).includes('สถาบัน') || norm(h).includes('โรงเรียน'));
         
         if (isThailand) {
-            // โครงสร้างคอลัมน์กรณีชิงแชมป์ประเทศไทย (Col B:L)
             return {
                 medalIdx: medal !== -1 ? medal : 0,
                 teamIdIdx: id !== -1 ? id : 1,
@@ -437,7 +408,6 @@
                 totalScoreIdx: 10 // Col L
             };
         } else {
-            // โครงสร้างคอลัมน์กรณีภูมิภาคปกติ (Col B:H)
             let r1 = headers.findIndex(h => norm(h).includes('round 1') || norm(h).includes('รอบ 1'));
             let r2 = headers.findIndex(h => norm(h).includes('round 2') || norm(h).includes('รอบ 2'));
             let best = headers.findIndex(h => norm(h).includes('best') || norm(h).includes('คะแนนดีที่สุด') || norm(h).includes('total'));
@@ -467,7 +437,6 @@
         
         if (!isSilent) {
             if (tableBody) tableBody.parentElement.parentElement.classList.add('hidden');
-            if (paginationContainer) paginationContainer.classList.add('hidden');
             if (remarkBox) remarkBox.classList.add('hidden');
             if (tableSubtitle) tableSubtitle.classList.add('hidden');
             if (loading) loading.classList.remove('hidden');
@@ -524,20 +493,18 @@
         currentData = result.data || []; 
         isThailandMode = result.isThailand || (regionSelect.value === 'Thailand');
 
-        // ⚡ หาตำแหน่งคอลัมน์ Dynamic
+        // หาตำแหน่งคอลัมน์ Dynamic
         colIndexes = parseColumnIndexes(currentHeaders, isThailandMode);
         
-        // ⚡ ตรวจสอบสถานะ Official/Unofficial
+        // ตรวจสอบสถานะ Official/Unofficial
         let isOfficial = false;
         if (currentData.length > 0) {
             if (isThailandMode) {
-                // ชิงแชมป์ประเทศไทย: ต้องมีคะแนนใน Round 2 (EX) [Col J / Index 8] ครบทุกทีม
                 isOfficial = currentData.every(row => {
                     const val = row[colIndexes.r2ExIdx];
                     return val !== null && val !== undefined && val.toString().trim() !== "" && val.toString().trim() !== "-";
                 });
             } else {
-                // รอบภูมิภาคปกติ: ต้องมีคะแนนใน Round 2 [Col G / Index 5] ครบทุกทีม
                 isOfficial = currentData.every(row => {
                     const val = row[colIndexes.r2Idx];
                     return val !== null && val !== undefined && val.toString().trim() !== "" && val.toString().trim() !== "-";
@@ -545,7 +512,7 @@
             }
         }
         
-        // ⚡ ตรวจหา Best Rookie ด้วย Regex
+        // ตรวจหา Best Rookie ด้วย Regex
         bestRookieIndex = currentData.findIndex(row => {
             const teamName = (row[colIndexes.teamNameIdx] || '').toString().trim();
             const hasRookieStar = /⭐/.test(teamName);
@@ -553,12 +520,56 @@
             return hasRookieStar && !hasNoAward;
         });
         
+        // สร้างรายการ Dropdown ค้นหารหัสทีม
+        populateTeamDropdown(currentData);
+
         updateStatus(isOfficial);
-        renderPaginationTable(isOfficial);
+        renderLongTable(isOfficial);
         
         if(currentData.length > 0) {
             if (remarkBox) remarkBox.classList.remove('hidden');
             if (tableSubtitle) tableSubtitle.classList.remove('hidden');
+        }
+    }
+
+    // ⚡ ฟังก์ชันใส่ตัวเลือกใน Dropdown Team ID
+    function populateTeamDropdown(data) {
+        if (!teamSelect) return;
+        
+        const previousSelected = teamSelect.value;
+        teamSelect.innerHTML = '<option value="" class="bg-white text-slate-800">-- แสดงทุกทีม (แสดงทั้งหมด) --</option>';
+        
+        if (!data || data.length === 0) {
+            teamSelect.disabled = true;
+            return;
+        }
+
+        const teamIds = new Set();
+        data.forEach(row => {
+            const tId = (row[colIndexes.teamIdIdx] || '').toString().trim();
+            if (tId && tId !== '-') {
+                teamIds.add(tId);
+            }
+        });
+
+        // เรียงลำดับตัวอักษร/ตัวเลขของ Team ID
+        const sortedIds = Array.from(teamIds).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+
+        sortedIds.forEach(id => {
+            const option = document.createElement('option');
+            option.value = id;
+            option.className = 'bg-white text-slate-800';
+            option.textContent = `Team ID: ${id}`;
+            teamSelect.appendChild(option);
+        });
+
+        teamSelect.disabled = false;
+
+        // คืนค่าที่เคยเลือกไว้เดิมหากมีในรายการใหม่
+        if (previousSelected && teamIds.has(previousSelected)) {
+            teamSelect.value = previousSelected;
+        } else {
+            teamSelect.value = "";
         }
     }
     
@@ -579,22 +590,21 @@
         }
     }
     
-    function renderPaginationTable(isOfficial) {
+    // ⚡ ฟังก์ชันวาดตารางยาวทั้งหมด (Long Table) โดยไม่แบ่งหน้า
+    function renderLongTable(isOfficial) {
         if (!tableHeaders || !tableBody) return;
         
         tableHeaders.innerHTML = '';
         if(!currentHeaders || currentHeaders.length === 0) {
             tableHeaders.innerHTML = '<th class="p-4 text-center">ไม่พบหัวตาราง</th>';
             tableBody.innerHTML = '<tr><td class="p-8 text-center text-slate-500 font-medium bg-slate-50">ไม่มีข้อมูลในแผ่นงานนี้</td></tr>';
-            if (paginationContainer) paginationContainer.classList.add('hidden');
             if (remarkBox) remarkBox.classList.add('hidden');
             return;
         }
 
-        // ⚡ คอลัมน์ที่ซ่อนบนตารางสรุปหลัก
+        // คอลัมน์ที่ซ่อนบนตารางสรุปหลัก
         let columnsToHide = [];
         if (isThailandMode) {
-            // ซ่อน Team ID, Institution, Round 1 (Day1), Round 2 (Day1), C1, Round 1 (EX), Round 2 (EX), C2
             columnsToHide = [
                 colIndexes.teamIdIdx, 
                 colIndexes.institutionIdx, 
@@ -606,7 +616,6 @@
                 colIndexes.c2Idx
             ];
         } else {
-            // ซ่อน Team ID, Institution, Round 1, Round 2
             columnsToHide = [
                 colIndexes.teamIdIdx, 
                 colIndexes.institutionIdx, 
@@ -620,7 +629,6 @@
             const th = document.createElement('th');
             th.className = 'p-4 md:p-5 tracking-wider'; 
             
-            // เปลี่ยนชื่อหัวคอลัมน์สุดท้ายของชิงแชมป์ประเทศไทยให้แสดงเป็น "Total Score"
             if (isThailandMode && index === colIndexes.totalScoreIdx) {
                 th.innerText = "Total Score";
             } else {
@@ -632,22 +640,11 @@
         tableBody.innerHTML = '';
         if (!currentData || currentData.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="${currentHeaders.length - columnsToHide.length}" class="p-8 text-center text-slate-500 font-medium bg-slate-50">ยังไม่มีข้อมูลการแข่งขันในรุ่นนี้</td></tr>`;
-            if (paginationContainer) paginationContainer.classList.add('hidden');
             if (remarkBox) remarkBox.classList.add('hidden');
             return;
         }
         
-        const totalRecords = currentData.length;
-        const totalPages = Math.max(1, Math.ceil(totalRecords / rowsPerPage));
-        
-        if (currentPage < 1) currentPage = 1;
-        if (currentPage > totalPages) currentPage = totalPages;
-        
-        const startIndex = (currentPage - 1) * rowsPerPage;
-        const endIndex = Math.min(startIndex + rowsPerPage, totalRecords);
-        const pageData = currentData.slice(startIndex, startIndex + rowsPerPage);
-        
-        // ⚡ การคำนวณอันดับจริง (awardRanksMap) - กรอง * และ ⚡ ออก
+        // การคำนวณอันดับจริง (awardRanksMap) สำหรับชุดข้อมูลทั้งหมด
         let awardRankCounter = 0;
         const awardRanksMap = currentData.map((row) => {
             const teamName = (row[colIndexes.teamNameIdx] || '').toString().trim();
@@ -659,23 +656,45 @@
                 return awardRankCounter;
             }
         });
+
+        // คัดกรองข้อมูลหากมีการเลือก Dropdown Team ID
+        const selectedTeamId = teamSelect ? teamSelect.value.trim() : '';
+        let displayList = currentData.map((row, index) => ({
+            row: row,
+            realIndex: index,
+            awardRank: awardRanksMap[index]
+        }));
+
+        if (selectedTeamId !== '') {
+            displayList = displayList.filter(item => {
+                const tId = (item.row[colIndexes.teamIdIdx] || '').toString().trim();
+                return tId === selectedTeamId;
+            });
+        }
+
+        if (displayList.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="${currentHeaders.length - columnsToHide.length}" class="p-8 text-center text-slate-500 font-medium bg-slate-50">ไม่พบข้อมูลรหัสทีม "${selectedTeamId}"</td></tr>`;
+            return;
+        }
         
-        pageData.forEach((row, index) => {
-            const realIndex = startIndex + index; 
-            const tr = document.createElement('tr');
-            const currentAwardRank = awardRanksMap[realIndex];
+        displayList.forEach((item, displayIdx) => {
+            const row = item.row;
+            const realIndex = item.realIndex;
+            const currentAwardRank = item.awardRank;
             
+            const tr = document.createElement('tr');
             tr.className = 'clickable-row border-b border-slate-200 ';
+            
             if (isOfficial) {
                 if (currentAwardRank >= 1 && currentAwardRank <= 3) {
                     tr.className += 'bg-amber-50/80 text-amber-900'; 
                 } else if (currentAwardRank >= 4 && currentAwardRank <= 10) {
                     tr.className += 'bg-blue-50/80 text-blue-900'; 
                 } else {
-                    tr.className += realIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50'; 
+                    tr.className += displayIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'; 
                 }
             } else {
-                tr.className += realIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50';
+                tr.className += displayIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
             }
             
             tr.addEventListener('click', () => openTeamDetail(row, realIndex, isOfficial, currentAwardRank));
@@ -700,23 +719,6 @@
             });
             tableBody.appendChild(tr);
         });
-        
-        if (paginationContainer) paginationContainer.classList.remove('hidden');
-        if (totalRows) totalRows.innerText = totalRecords;
-        if (startRange) startRange.innerText = startIndex + 1;
-        if (textEndRange) textEndRange.innerText = endIndex;
-        if (pageNumberDisplay) pageNumberDisplay.innerText = `หน้า ${currentPage} / ${totalPages}`;
-        
-        prevBtn.disabled = prevBtnMobile.disabled = (currentPage === 1);
-        nextBtn.disabled = nextBtnMobile.disabled = (currentPage === totalPages);
-        
-        const toggleBtnStyle = (btn) => {
-            if(!btn) return;
-            if(btn.disabled) btn.classList.add('opacity-40', 'cursor-not-allowed');
-            else btn.classList.remove('opacity-40', 'cursor-not-allowed');
-        };
-        toggleBtnStyle(prevBtn); toggleBtnStyle(nextBtn);
-        toggleBtnStyle(prevBtnMobile); toggleBtnStyle(nextBtnMobile);
     }
     
     function openTeamDetail(row, realIndex, isOfficial, currentAwardRank) {
@@ -748,11 +750,10 @@
             }
         }
         
-        // ⚡ 2. สร้าง Performance Overview Dynamic ใน Modal Detail
+        // สร้าง Performance Overview Dynamic ใน Modal Detail
         const perfContainer = document.getElementById('performanceOverviewContainer');
         if (perfContainer) {
             if (isThailandMode) {
-                // 🇹🇭 โครงสร้าง Modal Detail สำหรับรอบชิงแชมป์ประเทศไทย
                 const r1Day1 = (row[colIndexes.r1Day1Idx] !== undefined && row[colIndexes.r1Day1Idx] !== "") ? row[colIndexes.r1Day1Idx] : '-';
                 const r2Day1 = (row[colIndexes.r2Day1Idx] !== undefined && row[colIndexes.r2Day1Idx] !== "") ? row[colIndexes.r2Day1Idx] : '-';
                 const c1Val = (row[colIndexes.c1Idx] !== undefined) ? row[colIndexes.c1Idx].toString().trim() : '';
@@ -763,7 +764,6 @@
                 
                 const totalScore = (row[colIndexes.totalScoreIdx] !== undefined && row[colIndexes.totalScoreIdx] !== "") ? row[colIndexes.totalScoreIdx] : '-';
 
-                // เงื่อนไขการทำกรอบเด่นตัวหนังสือหนาสีเขียว
                 const isR1Day1Best = (c1Val === '1');
                 const isR2Day1Best = (c1Val === '2');
                 const isR1ExBest = (c2Val === '1');
@@ -807,7 +807,6 @@
                     </div>
                 `;
             } else {
-                // 🌐 โครงสร้าง Modal Detail สำหรับรอบภูมิภาคปกติ
                 const round1 = (colIndexes.r1Idx !== -1 && row[colIndexes.r1Idx] !== undefined && row[colIndexes.r1Idx] !== "") ? row[colIndexes.r1Idx] : '-';
                 const round2 = (colIndexes.r2Idx !== -1 && row[colIndexes.r2Idx] !== undefined && row[colIndexes.r2Idx] !== "") ? row[colIndexes.r2Idx] : '-';
                 const bestScore = (row[colIndexes.bestIdx] !== undefined && row[colIndexes.bestIdx] !== "") ? row[colIndexes.bestIdx] : '-';
@@ -840,7 +839,7 @@
             }
         }
         
-        // ⚡️ ส่วนของ Congratulation / Rewards
+        // ส่วนของ Congratulation / Rewards
         const congratSection = document.getElementById('congratulationsSection');
         const reward1 = document.getElementById('rewardRank1');
         const reward2 = document.getElementById('rewardRank2');
@@ -929,15 +928,6 @@
         }
     }
     
-    function changePage(direction) {
-        currentPage += direction;
-        const category = categorySelect.value;
-        updateHeaderColor(category);
-        const isOfficialBoard = (statusText && statusText.innerText.trim() === 'Official');
-        renderPaginationTable(isOfficialBoard);
-        if(tableTitle) tableTitle.scrollIntoView({ behavior: 'smooth' });
-    }
-    
     function closeModal() {
         const modal = document.getElementById('teamDetailModal');
         if(modal) {
@@ -1003,7 +993,6 @@
     function showError(message) {
         if(tableHeaders) tableHeaders.innerHTML = `<th class="p-4 text-center text-red-600">เกิดข้อผิดพลาด</th>`;
         if(tableBody) tableBody.innerHTML = `<tr><td class="p-8 text-center text-red-600 font-semibold bg-red-50">${message}</td></tr>`;
-        if(paginationContainer) paginationContainer.classList.add('hidden');
         if(remarkBox) remarkBox.classList.add('hidden');
     }
     
